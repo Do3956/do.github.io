@@ -66,7 +66,7 @@
 
 
 
-  <meta name="keywords" content="nginx,网络安全,">
+  <meta name="keywords" content="flask,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
-<meta name="keywords" content="nginx,网络安全">
+<meta name="description" content="获取参数的方式1. 通过的URL获取，如：zoo_id，cat_id2. 通过 request.args.get 获取，如：name12345@BP.route(&amp;apos;/zoo/&amp;lt;int:zoo_id&amp;gt;/cat/&amp;lt;int:cat_id&amp;gt;&amp;apos;, methods=[&amp;apos;GET&amp;apos;])def get_cat_info(zoo_id, cat_id):">
+<meta name="keywords" content="flask">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta property="og:url" content="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/index.html">
+<meta property="og:title" content="聊一聊flask的get">
+<meta property="og:url" content="http://yoursite.com/2018/12/20/聊一聊flask的get/index.html">
 <meta property="og:site_name" content="李庭嘉的博客">
-<meta property="og:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta property="og:description" content="获取参数的方式1. 通过的URL获取，如：zoo_id，cat_id2. 通过 request.args.get 获取，如：name12345@BP.route(&amp;apos;/zoo/&amp;lt;int:zoo_id&amp;gt;/cat/&amp;lt;int:cat_id&amp;gt;&amp;apos;, methods=[&amp;apos;GET&amp;apos;])def get_cat_info(zoo_id, cat_id):">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-03T11:21:15.448Z">
+<meta property="og:updated_time" content="2019-01-20T05:39:33.407Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta name="twitter:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta name="twitter:title" content="聊一聊flask的get">
+<meta name="twitter:description" content="获取参数的方式1. 通过的URL获取，如：zoo_id，cat_id2. 通过 request.args.get 获取，如：name12345@BP.route(&amp;apos;/zoo/&amp;lt;int:zoo_id&amp;gt;/cat/&amp;lt;int:cat_id&amp;gt;&amp;apos;, methods=[&amp;apos;GET&amp;apos;])def get_cat_info(zoo_id, cat_id):">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+  <link rel="canonical" href="http://yoursite.com/2018/12/20/聊一聊flask的get/">
 
 
 
 
 
-  <title>nginx频率限制模块之HttpLimitReqModul | 李庭嘉的博客</title>
+  <title>聊一聊flask的get | 李庭嘉的博客</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/20/聊一聊flask的get/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Do Lee">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">nginx频率限制模块之HttpLimitReqModul</h1>
+          <h1 class="post-title" itemprop="name headline">聊一聊flask的get</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-30T12:26:41+08:00">
-                2018-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-20T22:02:41+08:00">
+                2018-12-20
               </time>
             
 
@@ -305,8 +305,19 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">nginx</span>
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/flask/" itemprop="url" rel="index">
+                    <span itemprop="name">flask</span>
                   </a>
                 </span>
 
@@ -342,35 +353,11 @@
       
 
       
-        <p>HttpLimitReqModul为nginx官方自带的<strong>限制单位时间内请求次数</strong>的功能模块，通过<strong>limit_req_zone</strong>和<strong>limit_req</strong>指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。<br>可以利用该规则对IP和URL进行访问频率的限制。</p>
-<blockquote>
-<ul>
-<li>limit_conn_zone 定义IP或url访问的频率限制规则<br>只能配置在 http{} </li>
-<li>limit_conn 启用对应的规则<br>可以配置于http{}，server{}，location{} </li>
-</ul>
-</blockquote>
-<h4 id="限制规则"><a href="#限制规则" class="headerlink" title="限制规则"></a>限制规则</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>limit_req_zone 可以理解为命令声明，类似于 <code>int x=0</code> 中的 int<h5 id="限制类型"><a href="#限制类型" class="headerlink" title="限制类型"></a>限制类型</h5></li>
-<li>$binary_remote_addr 代表限制IP</li>
-<li>$request_uri 代表限制URL<h5 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h5></li>
-<li><code>zone=ip_second:10m   rate=10r/s</code>相当于<code>zone=限制规则变量名:内存占用上限 频率=次数r/秒</code><h5 id="内存占用上限"><a href="#内存占用上限" class="headerlink" title="内存占用上限"></a>内存占用上限</h5></li>
-<li>1m大约可以存1.6W个ip回话</li>
-<li>10m—-16W<h5 id="频率限制"><a href="#频率限制" class="headerlink" title="频率限制"></a>频率限制</h5>采用漏桶原理，简单理解就是，<code>rate=10r/s</code> 这十个请求平均分配在1秒内，也就是100ms最多能通过一次请求，而不是前面100ms接收10次，后面才不能接收。</li>
-</ul>
-<h4 id="限制范围"><a href="#限制范围" class="headerlink" title="限制范围"></a>限制范围</h4><p>当 limit_req 设置后，对应的 limit_req_zone 规则才会生效，而且只在 limit_req 声明的范围内生效<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">limit_req   zone=限制规则变量名 burst=5  nodelay;</span><br></pre></td></tr></table></figure></p>
-<h5 id="全局生效"><a href="#全局生效" class="headerlink" title="全局生效"></a>全局生效</h5><p>将此命令放在 http{} 层，紧接着 limit_req_zone 之后</p>
-<h5 id="局部生效"><a href="#局部生效" class="headerlink" title="局部生效"></a>局部生效</h5><p>将此命令放在 server{} 或 location{} 层，则在此之外的层级不受影响，还可以在不同的层级设置不同的规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=2  nodelay;</span><br><span class="line">&#125;</span><br><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=5  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="burst"><a href="#burst" class="headerlink" title="burst"></a>burst</h5><p>burst 代表令牌数量，至少要为1，即可以在limit_req_zone规则的基础上，额外可以请求的数量。<br>令牌消耗后，以 limit_req_zone 定义的时间单位恢复。</p>
-<h4 id="频率单位"><a href="#频率单位" class="headerlink" title="频率单位"></a>频率单位</h4><p>只能控制 秒（rate=100r/s） 和 分钟（rate=100r/m） 级别</p>
-<h4 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h4><p>多个限制时，只要有一个符合条件，就会触发限制</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">        #限制ip</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">        limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">        limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line"></span><br><span class="line">        #限制url</span><br><span class="line">        limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br><span class="line">        limit_req   zone=url_minute  burst=1  nodelay;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>一秒内请求100次</p>
-<blockquote>
-<p>ab -n 100 -c 10 url</p>
-</blockquote>
-<p>只会有51个成功，<code>rate=10r/m</code>代表一分钟10个请求，系统会默认把这十个请求平均分配在60秒内，即6秒一个请求，所以1秒内，只能用掉这里的1个名额，剩下50个名额用的是<code>burst=50</code>令牌的名额。</p>
-<h4 id="自定义返回码"><a href="#自定义返回码" class="headerlink" title="自定义返回码"></a>自定义返回码</h4><p>自定义限制规则生效后的返回码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    limit_conn_status 503;</span><br><span class="line"></span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=100r/s;</span><br><span class="line">    limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">    limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <h2 id="获取参数的方式"><a href="#获取参数的方式" class="headerlink" title="获取参数的方式"></a>获取参数的方式</h2><h4 id="1-通过的URL获取，如：zoo-id，cat-id"><a href="#1-通过的URL获取，如：zoo-id，cat-id" class="headerlink" title="1. 通过的URL获取，如：zoo_id，cat_id"></a>1. 通过的URL获取，如：zoo_id，cat_id</h4><h4 id="2-通过-request-args-get-获取，如：name"><a href="#2-通过-request-args-get-获取，如：name" class="headerlink" title="2. 通过 request.args.get 获取，如：name"></a>2. 通过 request.args.get 获取，如：name</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">@BP.route(&apos;/zoo/&lt;int:zoo_id&gt;/cat/&lt;int:cat_id&gt;&apos;, methods=[&apos;GET&apos;])</span><br><span class="line">def get_cat_info(zoo_id, cat_id):</span><br><span class="line">    &quot;&quot;&quot;  &quot;&quot;&quot;</span><br><span class="line">    name = request.args.get(&apos;name&apos;, type=str, default=None)</span><br></pre></td></tr></table></figure>
+<h2 id="get-获取json格式"><a href="#get-获取json格式" class="headerlink" title="get 获取json格式"></a>get 获取json格式</h2><h4 id="1-通过URL传递"><a href="#1-通过URL传递" class="headerlink" title="1. 通过URL传递"></a>1. 通过URL传递</h4><p>这种方法虽然比较麻烦，但是接口较为通用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@BP.route(&apos;/zoo/&lt;int:zoo_id&gt;/cats&apos;, methods=[&apos;GET&apos;])</span><br><span class="line">def get_cat_list(zoo_id):</span><br><span class="line">    &quot;&quot;&quot;  &quot;&quot;&quot;</span><br><span class="line">ids = request.args.get(&apos;ids&apos;, type=str, default=0)</span><br><span class="line">ids = json.loads(ids)</span><br></pre></td></tr></table></figure></p>
+<p>测试方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url = &apos;/zoo/&lt;int:zoo_id&gt;/cats?ids=%s&apos; % json.dumps([1,2,3])</span><br><span class="line">request.get(url)</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-通过body传递"><a href="#2-通过body传递" class="headerlink" title="2. 通过body传递"></a>2. 通过body传递</h4><p>get_json比较简单，获取到的已经是json格式了，可以直接使用。<br>但get一般都不会通过body来传参，非一般规范，可以和项目协商后，统一采用一种方式。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@BP.route(&apos;/zoo/&lt;int:zoo_id&gt;/cats&apos;, methods=[&apos;GET&apos;])</span><br><span class="line">def get_cat_list(zoo_id):</span><br><span class="line">params = request.get_json()</span><br><span class="line">id = params.get(&quot;id&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>测试方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">url = &apos;/zoo/&lt;int:zoo_id&gt;/cats&apos;</span><br><span class="line">request.get(url, json=&#123;&quot;ids&quot;:[20]&#125;)</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -417,9 +404,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/nginx/" rel="tag"># nginx</a>
-          
-            <a href="/tags/网络安全/" rel="tag"># 网络安全</a>
+            <a href="/tags/flask/" rel="tag"># flask</a>
           
         </div>
       
@@ -432,14 +417,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/12/03/Python的with原理/" rel="next" title="Python的with原理">
+                <i class="fa fa-chevron-left"></i> Python的with原理
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/03/Python的with原理/" rel="prev" title="Python的with原理">
-                Python的with原理 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/20/git多人协作流程/" rel="prev" title="git多人协作流程">
+                git多人协作流程 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -595,7 +584,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#限制规则"><span class="nav-number">1.</span> <span class="nav-text">限制规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#限制类型"><span class="nav-number">1.1.</span> <span class="nav-text">限制类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规则"><span class="nav-number">1.2.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存占用上限"><span class="nav-number">1.3.</span> <span class="nav-text">内存占用上限</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#频率限制"><span class="nav-number">1.4.</span> <span class="nav-text">频率限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限制范围"><span class="nav-number">2.</span> <span class="nav-text">限制范围</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#全局生效"><span class="nav-number">2.1.</span> <span class="nav-text">全局生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#局部生效"><span class="nav-number">2.2.</span> <span class="nav-text">局部生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#burst"><span class="nav-number">2.3.</span> <span class="nav-text">burst</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频率单位"><span class="nav-number">3.</span> <span class="nav-text">频率单位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例分析"><span class="nav-number">4.</span> <span class="nav-text">案例分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义返回码"><span class="nav-number">5.</span> <span class="nav-text">自定义返回码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取参数的方式"><span class="nav-number">1.</span> <span class="nav-text">获取参数的方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-通过的URL获取，如：zoo-id，cat-id"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 通过的URL获取，如：zoo_id，cat_id</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-通过-request-args-get-获取，如：name"><span class="nav-number">1.0.2.</span> <span class="nav-text">2. 通过 request.args.get 获取，如：name</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#get-获取json格式"><span class="nav-number">2.</span> <span class="nav-text">get 获取json格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-通过URL传递"><span class="nav-number">2.0.1.</span> <span class="nav-text">1. 通过URL传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-通过body传递"><span class="nav-number">2.0.2.</span> <span class="nav-text">2. 通过body传递</span></a></li></ol></li></div>
             
 
           </div>

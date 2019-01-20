@@ -66,7 +66,7 @@
 
 
 
-  <meta name="keywords" content="nginx,网络安全,">
+  <meta name="keywords" content="服务发现,wsgi,flask,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
-<meta name="keywords" content="nginx,网络安全">
+<meta name="description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
+<meta name="keywords" content="服务发现,wsgi,flask">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta property="og:url" content="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/index.html">
+<meta property="og:title" content="关于过进程的配置管理">
+<meta property="og:url" content="http://yoursite.com/2018/12/20/flask刷新内存配置/index.html">
 <meta property="og:site_name" content="李庭嘉的博客">
-<meta property="og:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta property="og:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-03T11:21:15.448Z">
+<meta property="og:updated_time" content="2019-01-20T05:39:33.373Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta name="twitter:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta name="twitter:title" content="关于过进程的配置管理">
+<meta name="twitter:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+  <link rel="canonical" href="http://yoursite.com/2018/12/20/flask刷新内存配置/">
 
 
 
 
 
-  <title>nginx频率限制模块之HttpLimitReqModul | 李庭嘉的博客</title>
+  <title>关于过进程的配置管理 | 李庭嘉的博客</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/20/flask刷新内存配置/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Do Lee">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">nginx频率限制模块之HttpLimitReqModul</h1>
+          <h1 class="post-title" itemprop="name headline">关于过进程的配置管理</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-30T12:26:41+08:00">
-                2018-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-20T22:02:41+08:00">
+                2018-12-20
               </time>
             
 
@@ -305,8 +305,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">nginx</span>
+                  <a href="/categories/服务发现/" itemprop="url" rel="index">
+                    <span itemprop="name">服务发现</span>
                   </a>
                 </span>
 
@@ -342,35 +342,36 @@
       
 
       
-        <p>HttpLimitReqModul为nginx官方自带的<strong>限制单位时间内请求次数</strong>的功能模块，通过<strong>limit_req_zone</strong>和<strong>limit_req</strong>指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。<br>可以利用该规则对IP和URL进行访问频率的限制。</p>
+        <h4 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h4><p>程序中的配置，怎么能够实时更新。<br>其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，<br>其本质也还都配置的管理，都可以参考服务发现那套逻辑。</p>
+<h4 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h4><ol>
+<li>对外暴露一个接口，用于刷新配置</li>
+<li>定时加载配置到服务中</li>
+<li>每次接口调用都实时去加载配置</li>
+</ol>
+<h4 id="各方案优缺点"><a href="#各方案优缺点" class="headerlink" title="各方案优缺点"></a>各方案优缺点</h4><ol>
+<li>对外暴露一个接口，用于刷新配置<ol>
+<li>稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。</li>
+</ol>
+</li>
+<li>定时加载配置到服务中 <ol>
+<li>需要等待刷新的时间，配置人员要等待，不具备实时性</li>
+<li>无法很好的把控程序刷新时机，如果要同时改多个配置，可能会有配置改到一半就被刷新的风险</li>
+</ol>
+</li>
+<li>每次接口调用都实时去加载配置<ol>
+<li>简单，但是配置多或访问量大的情况不适合</li>
+<li>优化，将配置更新时间存在redis中，每次访问redis，和本地的更新时间做比较，不一致则更新。</li>
+</ol>
+</li>
+</ol>
 <blockquote>
-<ul>
-<li>limit_conn_zone 定义IP或url访问的频率限制规则<br>只能配置在 http{} </li>
-<li>limit_conn 启用对应的规则<br>可以配置于http{}，server{}，location{} </li>
-</ul>
+<p>目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路</p>
 </blockquote>
-<h4 id="限制规则"><a href="#限制规则" class="headerlink" title="限制规则"></a>限制规则</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>limit_req_zone 可以理解为命令声明，类似于 <code>int x=0</code> 中的 int<h5 id="限制类型"><a href="#限制类型" class="headerlink" title="限制类型"></a>限制类型</h5></li>
-<li>$binary_remote_addr 代表限制IP</li>
-<li>$request_uri 代表限制URL<h5 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h5></li>
-<li><code>zone=ip_second:10m   rate=10r/s</code>相当于<code>zone=限制规则变量名:内存占用上限 频率=次数r/秒</code><h5 id="内存占用上限"><a href="#内存占用上限" class="headerlink" title="内存占用上限"></a>内存占用上限</h5></li>
-<li>1m大约可以存1.6W个ip回话</li>
-<li>10m—-16W<h5 id="频率限制"><a href="#频率限制" class="headerlink" title="频率限制"></a>频率限制</h5>采用漏桶原理，简单理解就是，<code>rate=10r/s</code> 这十个请求平均分配在1秒内，也就是100ms最多能通过一次请求，而不是前面100ms接收10次，后面才不能接收。</li>
+<h4 id="以往的方案"><a href="#以往的方案" class="headerlink" title="以往的方案"></a>以往的方案</h4><p>采用第一种。<br>用的twisted或tornado异步处理请求，每个进程分别对应两个端口，分别对内和对外提供服务。<br>对内服务主要用于刷新配置和设置临时变量。<br>如果要刷新配置，只要调用对应的内部端口即可。</p>
+<h4 id="新的问题"><a href="#新的问题" class="headerlink" title="新的问题"></a>新的问题</h4><p>目前团队用的flask，采用wsgi管理多个进程，而多个进程的端口都是同一个。<br>怎么样才能让所有的进程都同步到最新的配置呢？</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
+<li><a href="https://www.jianshu.com/p/75e1107530b1" target="_blank" rel="noopener">https://www.jianshu.com/p/75e1107530b1</a></li>
 </ul>
-<h4 id="限制范围"><a href="#限制范围" class="headerlink" title="限制范围"></a>限制范围</h4><p>当 limit_req 设置后，对应的 limit_req_zone 规则才会生效，而且只在 limit_req 声明的范围内生效<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">limit_req   zone=限制规则变量名 burst=5  nodelay;</span><br></pre></td></tr></table></figure></p>
-<h5 id="全局生效"><a href="#全局生效" class="headerlink" title="全局生效"></a>全局生效</h5><p>将此命令放在 http{} 层，紧接着 limit_req_zone 之后</p>
-<h5 id="局部生效"><a href="#局部生效" class="headerlink" title="局部生效"></a>局部生效</h5><p>将此命令放在 server{} 或 location{} 层，则在此之外的层级不受影响，还可以在不同的层级设置不同的规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=2  nodelay;</span><br><span class="line">&#125;</span><br><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=5  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="burst"><a href="#burst" class="headerlink" title="burst"></a>burst</h5><p>burst 代表令牌数量，至少要为1，即可以在limit_req_zone规则的基础上，额外可以请求的数量。<br>令牌消耗后，以 limit_req_zone 定义的时间单位恢复。</p>
-<h4 id="频率单位"><a href="#频率单位" class="headerlink" title="频率单位"></a>频率单位</h4><p>只能控制 秒（rate=100r/s） 和 分钟（rate=100r/m） 级别</p>
-<h4 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h4><p>多个限制时，只要有一个符合条件，就会触发限制</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">        #限制ip</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">        limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">        limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line"></span><br><span class="line">        #限制url</span><br><span class="line">        limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br><span class="line">        limit_req   zone=url_minute  burst=1  nodelay;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>一秒内请求100次</p>
-<blockquote>
-<p>ab -n 100 -c 10 url</p>
-</blockquote>
-<p>只会有51个成功，<code>rate=10r/m</code>代表一分钟10个请求，系统会默认把这十个请求平均分配在60秒内，即6秒一个请求，所以1秒内，只能用掉这里的1个名额，剩下50个名额用的是<code>burst=50</code>令牌的名额。</p>
-<h4 id="自定义返回码"><a href="#自定义返回码" class="headerlink" title="自定义返回码"></a>自定义返回码</h4><p>自定义限制规则生效后的返回码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    limit_conn_status 503;</span><br><span class="line"></span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=100r/s;</span><br><span class="line">    limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">    limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -417,9 +418,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/nginx/" rel="tag"># nginx</a>
+            <a href="/tags/服务发现/" rel="tag"># 服务发现</a>
           
-            <a href="/tags/网络安全/" rel="tag"># 网络安全</a>
+            <a href="/tags/wsgi/" rel="tag"># wsgi</a>
+          
+            <a href="/tags/flask/" rel="tag"># flask</a>
           
         </div>
       
@@ -432,14 +435,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/12/20/git多人协作流程/" rel="next" title="git多人协作流程">
+                <i class="fa fa-chevron-left"></i> git多人协作流程
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/03/Python的with原理/" rel="prev" title="Python的with原理">
-                Python的with原理 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/12/25/URL命名规范/" rel="prev" title="URL命名规范">
+                URL命名规范 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -595,7 +602,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#限制规则"><span class="nav-number">1.</span> <span class="nav-text">限制规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#限制类型"><span class="nav-number">1.1.</span> <span class="nav-text">限制类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规则"><span class="nav-number">1.2.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存占用上限"><span class="nav-number">1.3.</span> <span class="nav-text">内存占用上限</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#频率限制"><span class="nav-number">1.4.</span> <span class="nav-text">频率限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限制范围"><span class="nav-number">2.</span> <span class="nav-text">限制范围</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#全局生效"><span class="nav-number">2.1.</span> <span class="nav-text">全局生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#局部生效"><span class="nav-number">2.2.</span> <span class="nav-text">局部生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#burst"><span class="nav-number">2.3.</span> <span class="nav-text">burst</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频率单位"><span class="nav-number">3.</span> <span class="nav-text">频率单位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例分析"><span class="nav-number">4.</span> <span class="nav-text">案例分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义返回码"><span class="nav-number">5.</span> <span class="nav-text">自定义返回码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#需求："><span class="nav-number">1.</span> <span class="nav-text">需求：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案"><span class="nav-number">2.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#各方案优缺点"><span class="nav-number">3.</span> <span class="nav-text">各方案优缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以往的方案"><span class="nav-number">4.</span> <span class="nav-text">以往的方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的问题"><span class="nav-number">5.</span> <span class="nav-text">新的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>

@@ -66,7 +66,7 @@
 
 
 
-  <meta name="keywords" content="nginx,网络安全,">
+  <meta name="keywords" content="软件设计,">
 
 
 
@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
-<meta name="keywords" content="nginx,网络安全">
+<meta name="description" content="个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。  创建模式简单工厂模式对于一个方法，需要在多种情景下调用。如发送消息：12345678910111213141516171819202122232425262728293031class Se">
+<meta name="keywords" content="软件设计">
 <meta property="og:type" content="article">
-<meta property="og:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta property="og:url" content="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/index.html">
+<meta property="og:title" content="所谓设计模式">
+<meta property="og:url" content="http://yoursite.com/2019/01/20/所谓设计模式/index.html">
 <meta property="og:site_name" content="李庭嘉的博客">
-<meta property="og:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta property="og:description" content="个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。  创建模式简单工厂模式对于一个方法，需要在多种情景下调用。如发送消息：12345678910111213141516171819202122232425262728293031class Se">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-03T11:21:15.448Z">
+<meta property="og:updated_time" content="2019-01-20T05:39:33.407Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="nginx频率限制模块之HttpLimitReqModul">
-<meta name="twitter:description" content="HttpLimitReqModul为nginx官方自带的限制单位时间内请求次数的功能模块，通过limit_req_zone和limit_req指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。可以利用该规则对IP和URL进行访问频率的限制。   limit_conn_zone 定义IP或url访问的频率限制规则只能配置在 http{}  limit_conn 启用对应的规">
+<meta name="twitter:title" content="所谓设计模式">
+<meta name="twitter:description" content="个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。  创建模式简单工厂模式对于一个方法，需要在多种情景下调用。如发送消息：12345678910111213141516171819202122232425262728293031class Se">
 
 
 
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+  <link rel="canonical" href="http://yoursite.com/2019/01/20/所谓设计模式/">
 
 
 
 
 
-  <title>nginx频率限制模块之HttpLimitReqModul | 李庭嘉的博客</title>
+  <title>所谓设计模式 | 李庭嘉的博客</title>
   
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/nginx频率限制模块之HttpLimitReqModul/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/20/所谓设计模式/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Do Lee">
@@ -270,7 +270,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">nginx频率限制模块之HttpLimitReqModul</h1>
+          <h1 class="post-title" itemprop="name headline">所谓设计模式</h1>
         
 
         <div class="post-meta">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-30T12:26:41+08:00">
-                2018-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-20T10:02:41+08:00">
+                2019-01-20
               </time>
             
 
@@ -305,8 +305,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/nginx/" itemprop="url" rel="index">
-                    <span itemprop="name">nginx</span>
+                  <a href="/categories/软件设计/" itemprop="url" rel="index">
+                    <span itemprop="name">软件设计</span>
                   </a>
                 </span>
 
@@ -342,35 +342,21 @@
       
 
       
-        <p>HttpLimitReqModul为nginx官方自带的<strong>限制单位时间内请求次数</strong>的功能模块，通过<strong>limit_req_zone</strong>和<strong>limit_req</strong>指令配合使用来达到限制。一旦对应的累计连接超过指定数量，就会返回503错误。<br>可以利用该规则对IP和URL进行访问频率的限制。</p>
-<blockquote>
-<ul>
-<li>limit_conn_zone 定义IP或url访问的频率限制规则<br>只能配置在 http{} </li>
-<li>limit_conn 启用对应的规则<br>可以配置于http{}，server{}，location{} </li>
-</ul>
+        <blockquote>
+<p>个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。<br>而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。</p>
 </blockquote>
-<h4 id="限制规则"><a href="#限制规则" class="headerlink" title="限制规则"></a>限制规则</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>limit_req_zone 可以理解为命令声明，类似于 <code>int x=0</code> 中的 int<h5 id="限制类型"><a href="#限制类型" class="headerlink" title="限制类型"></a>限制类型</h5></li>
-<li>$binary_remote_addr 代表限制IP</li>
-<li>$request_uri 代表限制URL<h5 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h5></li>
-<li><code>zone=ip_second:10m   rate=10r/s</code>相当于<code>zone=限制规则变量名:内存占用上限 频率=次数r/秒</code><h5 id="内存占用上限"><a href="#内存占用上限" class="headerlink" title="内存占用上限"></a>内存占用上限</h5></li>
-<li>1m大约可以存1.6W个ip回话</li>
-<li>10m—-16W<h5 id="频率限制"><a href="#频率限制" class="headerlink" title="频率限制"></a>频率限制</h5>采用漏桶原理，简单理解就是，<code>rate=10r/s</code> 这十个请求平均分配在1秒内，也就是100ms最多能通过一次请求，而不是前面100ms接收10次，后面才不能接收。</li>
+<h1 id="创建模式"><a href="#创建模式" class="headerlink" title="创建模式"></a>创建模式</h1><h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><p>对于一个方法，需要在多种情景下调用。如发送消息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">class SendModule:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    发生消息的原型</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">class EMail(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景1</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过邮件发送&quot;)</span><br><span class="line">        </span><br><span class="line">class SMS(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景2</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过短信发送&quot;)</span><br><span class="line"></span><br><span class="line">class SendFactory:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self, type):</span><br><span class="line">        if type == 1:</span><br><span class="line">            EMail().send()</span><br><span class="line">        else:</span><br><span class="line">            SMS().send()</span><br></pre></td></tr></table></figure></p>
+<p>更实际的，直接将SendFactory用方法来封装。<br>这里只返回哪个类对象，send方法让具体的业务调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def sender_factory(type):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        if type == 1:</span><br><span class="line">            return EMail()</span><br><span class="line">        else:</span><br><span class="line">            return SMS()</span><br></pre></td></tr></table></figure></p>
+<h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>不需要用 sender_factory 来选择用哪个情景，直接根据具体的业务场景来调用 EMail().send() / SMS().send()。<br>免去了改 sender_factory 逻辑的烦恼。<br>其实简单工厂和工厂，主要的核心还是在于有一个相同的方法send，分别用于多种类。</p>
+<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p>将组装的部分放在一个类里面，组成一个实体</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class 头:</span><br><span class="line">    pass</span><br><span class="line">class 身体:</span><br><span class="line">    pass</span><br><span class="line">class 肢体:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">class 鸭子:</span><br><span class="line">    return 头() + 身体() + 肢体()</span><br></pre></td></tr></table></figure>
+<h2 id="工厂模式-1"><a href="#工厂模式-1" class="headerlink" title="工厂模式"></a>工厂模式</h2><ul>
+<li>参考 *</li>
 </ul>
-<h4 id="限制范围"><a href="#限制范围" class="headerlink" title="限制范围"></a>限制范围</h4><p>当 limit_req 设置后，对应的 limit_req_zone 规则才会生效，而且只在 limit_req 声明的范围内生效<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">limit_req   zone=限制规则变量名 burst=5  nodelay;</span><br></pre></td></tr></table></figure></p>
-<h5 id="全局生效"><a href="#全局生效" class="headerlink" title="全局生效"></a>全局生效</h5><p>将此命令放在 http{} 层，紧接着 limit_req_zone 之后</p>
-<h5 id="局部生效"><a href="#局部生效" class="headerlink" title="局部生效"></a>局部生效</h5><p>将此命令放在 server{} 或 location{} 层，则在此之外的层级不受影响，还可以在不同的层级设置不同的规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=2  nodelay;</span><br><span class="line">&#125;</span><br><span class="line">server&#123;</span><br><span class="line">	limit_req   zone=限制规则变量名  burst=5  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="burst"><a href="#burst" class="headerlink" title="burst"></a>burst</h5><p>burst 代表令牌数量，至少要为1，即可以在limit_req_zone规则的基础上，额外可以请求的数量。<br>令牌消耗后，以 limit_req_zone 定义的时间单位恢复。</p>
-<h4 id="频率单位"><a href="#频率单位" class="headerlink" title="频率单位"></a>频率单位</h4><p>只能控制 秒（rate=100r/s） 和 分钟（rate=100r/m） 级别</p>
-<h4 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h4><p>多个限制时，只要有一个符合条件，就会触发限制</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">        #限制ip</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=10r/s;</span><br><span class="line">        limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">        limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">        limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line"></span><br><span class="line">        #限制url</span><br><span class="line">        limit_req_zone $request_uri zone=url_minute:10m   rate=1r/m;</span><br><span class="line">        limit_req   zone=url_minute  burst=1  nodelay;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>一秒内请求100次</p>
-<blockquote>
-<p>ab -n 100 -c 10 url</p>
-</blockquote>
-<p>只会有51个成功，<code>rate=10r/m</code>代表一分钟10个请求，系统会默认把这十个请求平均分配在60秒内，即6秒一个请求，所以1秒内，只能用掉这里的1个名额，剩下50个名额用的是<code>burst=50</code>令牌的名额。</p>
-<h4 id="自定义返回码"><a href="#自定义返回码" class="headerlink" title="自定义返回码"></a>自定义返回码</h4><p>自定义限制规则生效后的返回码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    limit_conn_status 503;</span><br><span class="line"></span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_second:10m   rate=100r/s;</span><br><span class="line">    limit_req   zone=ip_second  burst=5  nodelay;</span><br><span class="line">    limit_req_zone $binary_remote_addr zone=ip_minute:100m   rate=10r/m;</span><br><span class="line">    limit_req   zone=ip_minute  burst=50  nodelay;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><a href="https://www.cnblogs.com/geek6/p/3951677.html" target="_blank" rel="noopener">https://www.cnblogs.com/geek6/p/3951677.html</a></li>
+<li>《精通python设计模式》</li>
+</ul>
 
       
     </div>
@@ -417,9 +403,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/nginx/" rel="tag"># nginx</a>
-          
-            <a href="/tags/网络安全/" rel="tag"># 网络安全</a>
+            <a href="/tags/软件设计/" rel="tag"># 软件设计</a>
           
         </div>
       
@@ -432,14 +416,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/12/25/关于服务发现的疑问/" rel="next" title="URL命名规范">
+                <i class="fa fa-chevron-left"></i> URL命名规范
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/12/03/Python的with原理/" rel="prev" title="Python的with原理">
-                Python的with原理 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/01/20/所谓设计模式-六大原则/" rel="prev" title="所谓设计模式-六大原则">
+                所谓设计模式-六大原则 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -595,7 +583,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#限制规则"><span class="nav-number">1.</span> <span class="nav-text">限制规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#限制类型"><span class="nav-number">1.1.</span> <span class="nav-text">限制类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#规则"><span class="nav-number">1.2.</span> <span class="nav-text">规则</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#内存占用上限"><span class="nav-number">1.3.</span> <span class="nav-text">内存占用上限</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#频率限制"><span class="nav-number">1.4.</span> <span class="nav-text">频率限制</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#限制范围"><span class="nav-number">2.</span> <span class="nav-text">限制范围</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#全局生效"><span class="nav-number">2.1.</span> <span class="nav-text">全局生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#局部生效"><span class="nav-number">2.2.</span> <span class="nav-text">局部生效</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#burst"><span class="nav-number">2.3.</span> <span class="nav-text">burst</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频率单位"><span class="nav-number">3.</span> <span class="nav-text">频率单位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#案例分析"><span class="nav-number">4.</span> <span class="nav-text">案例分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自定义返回码"><span class="nav-number">5.</span> <span class="nav-text">自定义返回码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建模式"><span class="nav-number">1.</span> <span class="nav-text">创建模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂模式"><span class="nav-number">1.1.</span> <span class="nav-text">简单工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式"><span class="nav-number">1.2.</span> <span class="nav-text">工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">1.3.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式-1"><span class="nav-number">1.4.</span> <span class="nav-text">工厂模式</span></a></li></ol></li></ol></div>
             
 
           </div>

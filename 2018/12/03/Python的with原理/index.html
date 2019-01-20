@@ -83,11 +83,11 @@
 <meta name="keywords" content="Python">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python的with原理">
-<meta property="og:url" content="http://yoursite.com/2018/11/30/Python的with原理/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/12/03/Python的with原理/index.html">
 <meta property="og:site_name" content="李庭嘉的博客">
 <meta property="og:description" content="引言对一个文件进行操作，我们可以这样写：123f = open(file, mode)...f.close() #关闭文件 但是可能会在文件操作的过程中触发异常，导致f.close()没有被执行，于是我们对其做出以下改良：12345f = open(file, mode)try:    ...finally:    f.close() 嗯…貌似有点繁琐，能不能用一个简单点的方法呢？这时with就出">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-03T11:21:15.448Z">
+<meta property="og:updated_time" content="2019-01-20T05:39:33.373Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python的with原理">
 <meta name="twitter:description" content="引言对一个文件进行操作，我们可以这样写：123f = open(file, mode)...f.close() #关闭文件 但是可能会在文件操作的过程中触发异常，导致f.close()没有被执行，于是我们对其做出以下改良：12345f = open(file, mode)try:    ...finally:    f.close() 嗯…貌似有点繁琐，能不能用一个简单点的方法呢？这时with就出">
@@ -120,7 +120,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/11/30/Python的with原理/">
+  <link rel="canonical" href="http://yoursite.com/2018/12/03/Python的with原理/">
 
 
 
@@ -253,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/30/Python的with原理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/03/Python的with原理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Do Lee">
@@ -282,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-30T12:26:41+08:00">
-                2018-11-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-03T17:02:41+08:00">
+                2018-12-03
               </time>
             
 
@@ -447,6 +447,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/12/20/聊一聊flask的get/" rel="prev" title="聊一聊flask的get">
+                聊一聊flask的get <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -522,7 +526,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -533,7 +537,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -544,7 +548,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">10</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -620,7 +624,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
