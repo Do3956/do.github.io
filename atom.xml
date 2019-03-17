@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-01-20T05:39:33.407Z</updated>
+  <updated>2019-03-17T15:09:33.364Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,241 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2019/03/17/python%E3%80%81redis%E5%B8%B8%E7%94%A8%E5%8F%98%E9%87%8F%E4%B8%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    <id>http://yoursite.com/2019/03/17/python、redis常用变量下的数据结构/</id>
+    <published>2019-03-17T15:09:33.364Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<p>list</p><ul><li>python 数组</li><li>redis 双向链表</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;list&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;python 数组&lt;/li&gt;
+&lt;li&gt;redis 双向链表&lt;/li&gt;
+&lt;/ul&gt;
+
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>读《Redis深度历险记》</title>
+    <link href="http://yoursite.com/2019/03/17/%E8%AF%BB%E3%80%8ARedis%E6%B7%B1%E5%BA%A6%E5%8E%86%E9%99%A9%E8%AE%B0%E3%80%8B/"/>
+    <id>http://yoursite.com/2019/03/17/读《Redis深度历险记》/</id>
+    <published>2019-03-17T13:55:00.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h1><h2 id="string"><a href="#string" class="headerlink" title="string"></a>string</h2><h2 id="list"><a href="#list" class="headerlink" title="list"></a>list</h2><h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><h2 id="有序-set"><a href="#有序-set" class="headerlink" title="有序 set"></a>有序 set</h2><h2 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h2><h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><h2 id="内存回收机制"><a href="#内存回收机制" class="headerlink" title="内存回收机制"></a>内存回收机制</h2><p>redis不会实时回收内存；<br>它的key是分页存放的，当一个页的所有key都被删除后，才会统一回收该页的内存；<br>虽然没有立即回收内存，但是不用的内存还是可以分配给新的key使用；<br>手动执行<code>flushdb</code>，可以立即回收内存。</p><h2 id="过期机制"><a href="#过期机制" class="headerlink" title="过期机制"></a>过期机制</h2><h3 id="主节点"><a href="#主节点" class="headerlink" title="主节点"></a>主节点</h3><ul><li>懒汉式删除</li><li>定时删除<ul><li>每10s一次</li><li>从过期字典中随机抽取20个，删除当中已过期的key</li><li>如果上一步中，已过期的key占20个的1/4以上，重复上一步</li><li>为避免阻塞时间过长，整个循环不超过25ms<h3 id="从节点"><a href="#从节点" class="headerlink" title="从节点"></a>从节点</h3>仅依靠主节点发送del指令</li></ul></li></ul><h3 id="可能出现的问题"><a href="#可能出现的问题" class="headerlink" title="可能出现的问题"></a>可能出现的问题</h3><p>如果有大量key同时过期，此时客户端请求，服务端正好处于过期扫描中，那么至少要等待25ms（另外可能存在多个内存页的回收耗时）</p><h3 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h3><p>避免大量key同时过期，timeout += random(second)</p><h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p><code>pipeline</code>的本质和单次发送命令差不多，只是变成了连续发送命令到服务端，省去多次等待IO的时间</p><h2 id="避免大key"><a href="#避免大key" class="headerlink" title="避免大key"></a>避免大key</h2><p>指的是大的value，以下情况容易造成卡顿：</p><ul><li>迁移</li><li>扩容时申请内存</li></ul><p>用scan扫描出大key，-i 每 scan 100条 sleep 0.1s<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli --bigkeys -i 0.1</span><br></pre></td></tr></table></figure></p><h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><h2 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h2><h2 id="附近的人（坐标，两点间距离）"><a href="#附近的人（坐标，两点间距离）" class="headerlink" title="附近的人（坐标，两点间距离）"></a>附近的人（坐标，两点间距离）</h2><h1 id="运维"><a href="#运维" class="headerlink" title="运维"></a>运维</h1><h2 id="客户端连接数"><a href="#客户端连接数" class="headerlink" title="客户端连接数"></a>客户端连接数</h2><h2 id="复制积压缓存区"><a href="#复制积压缓存区" class="headerlink" title="复制积压缓存区"></a>复制积压缓存区</h2><h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><h3 id="改写-禁用危险指令"><a href="#改写-禁用危险指令" class="headerlink" title="改写/禁用危险指令"></a>改写/禁用危险指令</h3><p>改写 keys 为 rename_keys<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rename-command keys rename_keys</span><br></pre></td></tr></table></figure></p><p>禁用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rename-command keys &apos;&apos;</span><br></pre></td></tr></table></figure></p><h3 id="不用6379，加密码，走内网，非root启动red-is"><a href="#不用6379，加密码，走内网，非root启动red-is" class="headerlink" title="不用6379，加密码，走内网，非root启动red is"></a>不用6379，加密码，走内网，非root启动red is</h3><h3 id="SSL代理-spiped"><a href="#SSL代理-spiped" class="headerlink" title="SSL代理-spiped"></a>SSL代理-spiped</h3><p>实在要走外网时</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;数据结构&quot;&gt;&lt;a href=&quot;#数据结构&quot; class=&quot;headerlink&quot; title=&quot;数据结构&quot;&gt;&lt;/a&gt;数据结构&lt;/h1&gt;&lt;h2 id=&quot;string&quot;&gt;&lt;a href=&quot;#string&quot; class=&quot;headerlink&quot; title=&quot;strin
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="redis" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/redis/"/>
+    
+    
+      <category term="redis" scheme="http://yoursite.com/tags/redis/"/>
+    
+      <category term="读书笔记" scheme="http://yoursite.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL-什么是分区</title>
+    <link href="http://yoursite.com/2019/02/26/MySQL-%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%8C%BA/"/>
+    <id>http://yoursite.com/2019/02/26/MySQL-什么是分区/</id>
+    <published>2019-02-26T09:42:41.000Z</published>
+    <updated>2019-03-17T15:09:33.363Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>分区类似于水平分表。<br>水平分表需要用户预先手动显式创建出多张分表(如tbl_user0, tbl_user1, tbl_user2)，在物理上实实在在的创建多张表，通过客户端代理(Sharding-JDBC等)或者中间件代理(Mycat等)来实现分表逻辑。<br>分区是MySQL的一个插件Plugin功能，将一张大表的数据在数据库底层分成多个分区文件(如tbl_user#P#p0.ibd, tbl_user#P#p1.ibd, tbl_user#P#p2.ibd)，和水平分表不同的是分区不需要显式的创建“分表”,数据库会自动创建分区文件的，用户看到的只是一张普通的表，其实是对应的是多个分区，这个是对用户是屏蔽的、透明的，在使用上和使用一张表完全一样，不需要借助任何功能来实现。<br>分区是一种逻辑上的水平分表，在物理层面还是一张表。</p><h1 id="分区类型"><a href="#分区类型" class="headerlink" title="分区类型"></a>分区类型</h1><p>range分区：基于一个给定的连续区间范围(区间要求连续并且不能重叠)，把数据分配到不同的分区</p><ul><li>注意最后一个区要设置在最大值以内，否则有部分数据没有专属分区，会导致bug</li></ul><p>list分区：类似于range分区，区别在于list分区是居于枚举出的值列表分区，range是基于给定的连续区间范围分区<br>hash分区：基于给定的分区个数，把数据分配到不同的分区<br>key分区：类似于hash分区</p><h1 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h1><p>分区表很帅气，为什么大部分互联网还是更多的选择自己分库分表来水平扩展咧？</p><p>回答：</p><p>1）分区表，分区键设计不太灵活，如果不走分区键，很容易出现全表锁</p><p>2）一旦数据量并发量上来，如果在分区表实施关联，就是一个灾难</p><p>3）自己分库分表，自己掌控业务场景与访问模式，可控。分区表，研发写了一个sql，都不确定mysql是怎么玩的，不太可控</p><p>4）运维的坑</p><p><strong>参考</strong></p><ul><li><a href="https://blog.csdn.net/vbirdbest/article/details/82461109" target="_blank" rel="noopener">https://blog.csdn.net/vbirdbest/article/details/82461109</a></li><li><a href="https://www.cnblogs.com/xiaoboluo768/p/5191964.html" target="_blank" rel="noopener">https://www.cnblogs.com/xiaoboluo768/p/5191964.html</a></li><li><a href="https://blog.csdn.net/laoyang360/article/details/52886987" target="_blank" rel="noopener">https://blog.csdn.net/laoyang360/article/details/52886987</a></li><li>range分区的bug <a href="https://blog.csdn.net/cug_jiang126com/article/details/51984628" target="_blank" rel="noopener">https://blog.csdn.net/cug_jiang126com/article/details/51984628</a></li><li>MySQL 5.7.18 分区有bug <a href="https://www.cnblogs.com/liujiacai/p/7611071.html" target="_blank" rel="noopener">https://www.cnblogs.com/liujiacai/p/7611071.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;概念&quot;&gt;&lt;a href=&quot;#概念&quot; class=&quot;headerlink&quot; title=&quot;概念&quot;&gt;&lt;/a&gt;概念&lt;/h1&gt;&lt;p&gt;分区类似于水平分表。&lt;br&gt;水平分表需要用户预先手动显式创建出多张分表(如tbl_user0, tbl_user1, tbl_user2)，
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/MySQL/"/>
+    
+    
+      <category term="性能优化" scheme="http://yoursite.com/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL-分区及中间件简介</title>
+    <link href="http://yoursite.com/2019/02/26/%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    <id>http://yoursite.com/2019/02/26/中间件基础知识/</id>
+    <published>2019-02-26T09:42:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h1><p>分区类似于水平分表。<br>水平分表需要用户预先手动显式创建出多张分表(如tbl_user0, tbl_user1, tbl_user2)，在物理上实实在在的创建多张表，通过客户端代理(Sharding-JDBC等)或者中间件代理(Mycat等)来实现分表逻辑。<br>分区是MySQL的一个插件Plugin功能，将一张大表的数据在数据库底层分成多个分区文件(如tbl_user#P#p0.ibd, tbl_user#P#p1.ibd, tbl_user#P#p2.ibd)，和水平分表不同的是分区不需要显式的创建“分表”,数据库会自动创建分区文件的，用户看到的只是一张普通的表，其实是对应的是多个分区，这个是对用户是屏蔽的、透明的，在使用上和使用一张表完全一样，不需要借助任何功能来实现。<br>分区是一种逻辑上的水平分表，在物理层面还是一张表。</p><h2 id="分片规则配置"><a href="#分片规则配置" class="headerlink" title="分片规则配置"></a>分片规则配置</h2><h2 id="JDBC规范重写"><a href="#JDBC规范重写" class="headerlink" title="JDBC规范重写"></a>JDBC规范重写</h2><h2 id="SQL解析"><a href="#SQL解析" class="headerlink" title="SQL解析"></a>SQL解析</h2><h3 id="fdb"><a href="#fdb" class="headerlink" title="fdb"></a>fdb</h3><h3 id="jsqlparser"><a href="#jsqlparser" class="headerlink" title="jsqlparser"></a>jsqlparser</h3><h3 id="Druid"><a href="#Druid" class="headerlink" title="Druid"></a>Druid</h3><h2 id="SQL改写"><a href="#SQL改写" class="headerlink" title="SQL改写"></a>SQL改写</h2><h2 id="SQL路由"><a href="#SQL路由" class="headerlink" title="SQL路由"></a>SQL路由</h2><h3 id="单表路由"><a href="#单表路由" class="headerlink" title="单表路由"></a>单表路由</h3><p>单表路由最为简单，但路由结果不一定落入唯一库（表），因为支持根据between和in这样的操作符进行分片，所以最终结果仍然可能落入多个库（表）。</p><h3 id="Binding表路由"><a href="#Binding表路由" class="headerlink" title="Binding表路由"></a>Binding表路由</h3><p>Binding表可理解为分库分表规则完全一致的主从表。举例说明：订单表和订单详情表都根据订单ID作为分片键，任意时刻分片逻辑均相同。这样的关联查询和单表查询难度和性能相当。</p><h3 id="笛卡尔积路由"><a href="#笛卡尔积路由" class="headerlink" title="笛卡尔积路由"></a>笛卡尔积路由</h3><p>笛卡尔积查询最为复杂，因为无法根据Binding关系定位分片规则的一致性，所以非Binding表的关联查询需要拆解为笛卡尔积组合执行。查询性能较低，而且数据库连接数较高，需谨慎使用。</p><p><strong>参考</strong></p><ul><li><a href="https://blog.csdn.net/qq_22075041/article/details/79490230" target="_blank" rel="noopener">https://blog.csdn.net/qq_22075041/article/details/79490230</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;分区&quot;&gt;&lt;a href=&quot;#分区&quot; class=&quot;headerlink&quot; title=&quot;分区&quot;&gt;&lt;/a&gt;分区&lt;/h1&gt;&lt;p&gt;分区类似于水平分表。&lt;br&gt;水平分表需要用户预先手动显式创建出多张分表(如tbl_user0, tbl_user1, tbl_user2)，
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/MySQL/"/>
+    
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+      <category term="大数据" scheme="http://yoursite.com/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>从SQL的执行原理优化多表查询</title>
+    <link href="http://yoursite.com/2019/02/26/%E4%BB%8ESQL%E7%9A%84%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86%E4%BC%98%E5%8C%96%E5%A4%9A%E8%A1%A8%E6%9F%A5%E8%AF%A2/"/>
+    <id>http://yoursite.com/2019/02/26/从SQL的执行原理优化多表查询/</id>
+    <published>2019-02-26T09:42:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="查询sql语句的执行流程"><a href="#查询sql语句的执行流程" class="headerlink" title="查询sql语句的执行流程"></a>查询sql语句的执行流程</h3><p>根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">From - 将涉及的表加载到内存</span><br><span class="line"></span><br><span class="line">ON - 作为产生笛卡尔积表的挑选条件</span><br><span class="line"></span><br><span class="line">JOIN - 此处产生笛卡尔积表（A表*B表），需要大量内存</span><br><span class="line"></span><br><span class="line">WHERE - 数据进行过滤，取出符合条件的记录行，生成一张临时表</span><br><span class="line"></span><br><span class="line">GROUP BY - 将上一步的临时表切分成若干临时表</span><br><span class="line"></span><br><span class="line">SELECT - 如果有GROUP BY，会对N个临时表进行N次查询，最终形成一个新的临时表</span><br><span class="line"></span><br><span class="line">HAVING - 对SELECT 语句执行之后的临时表中的数据过滤</span><br><span class="line"></span><br><span class="line">ORDER BY</span><br><span class="line"></span><br><span class="line">LIMIT</span><br></pre></td></tr></table></figure><blockquote><p>当两张表的数据量比较大，又需要连接查询时，应该使用 <code>FROM table1 JOIN table2 ON xxx</code> 的语法，避免使用 <code>FROM table1,table2 WHERE xxx</code> 的语法，因为后者会在内存中先生成一张数据量比较大的笛卡尔积表，增加了内存的开销。</p></blockquote><h3 id="计算SQL平均耗时"><a href="#计算SQL平均耗时" class="headerlink" title="计算SQL平均耗时"></a>计算SQL平均耗时</h3><p>计算 sql查询所耗费的平均时间时，要关掉mysql的查询缓存，防止多次执行从缓存中读取数据<br>可以用 <code>SQL_NO_CACHE</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE *</span><br><span class="line">FROM</span><br><span class="line">    mm_member</span><br></pre></td></tr></table></figure></p><h3 id="慎用子查询"><a href="#慎用子查询" class="headerlink" title="慎用子查询"></a>慎用子查询</h3><p>mm_member 为用户表（370 行），mm_log 为登陆记录（15W 行）<br>现在要求我们根据这两张表查出2017-02-06那天有那些用户登录过系统。</p><h4 id="join"><a href="#join" class="headerlink" title="join"></a>join</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.*</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">JOIN</span><br><span class="line">    mm_log ml</span><br><span class="line">ON</span><br><span class="line">    mm.id = ml.member_id</span><br><span class="line">WHERE</span><br><span class="line">    ml.access_time LIKE &apos;%2017-02-06%&apos;</span><br><span class="line">GROUP BY</span><br><span class="line">    ml.member_id;</span><br></pre></td></tr></table></figure><p>运行次数 mm_member * mm_log， 但是在on这一步就把后面的运行次数降到了 mm_member 的级别。</p><p>耗时：0.120s</p><h4 id="子查询-in"><a href="#子查询-in" class="headerlink" title="子查询 in"></a>子查询 in</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.username</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">WHERE</span><br><span class="line">    mm.id IN (SELECT ml.member_id FROM mm_log ml WHERE ml.access_time LIKE &apos;%2017-02-06%&apos; GROUP BY ml.member_id);</span><br></pre></td></tr></table></figure><p>运行次数 mm_member * mm_log， 和我们以为的不同，这里 IN 后面的子查询，是每一行mm_member都会去重新执行一遍，并且没有用到缓存。</p><p>耗时：40.834s &gt; 0.120s*370=44.4</p><p>其中子查询语句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SQL_NO_CACHE member_id FROM mm_log ml WHERE ml.access_time LIKE &apos;%2017-02-06%&apos; GROUP BY ml.member_id;</span><br></pre></td></tr></table></figure></p><p>仅耗时 0.11s</p><h4 id="子查询-exist"><a href="#子查询-exist" class="headerlink" title="子查询 exist"></a>子查询 exist</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.*</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">WHERE</span><br><span class="line">    EXISTS (SELECT * FROM mm_log ml WHERE mm.id = ml.member_id AND ml.access_time LIKE &apos;%2017-02-06%&apos;);</span><br></pre></td></tr></table></figure><p>相比于IN，这里的优化在于子查询，多了<code>mm.id = ml.member_id</code>条件，在where处就把不符合条件的记录过滤掉。</p><p>耗时：34s</p><p>对于在子查询中使用IN的性能高还是是用EXITS的性能高，有一种普遍的说法是：</p><p>1，在外表大，内表小，外表中有索引的情况下，使用IN。</p><p>2，在外表小，内表大，内表中有索引的情况下，使用EXITS。</p><p><strong>参考</strong></p><p>感谢大神分享，本文更多是总结和自己的理解补充，内容和例子都来自于</p><ul><li>sql语句的执行流程 <a href="https://blog.csdn.net/csdn_hklm/article/details/78394412" target="_blank" rel="noopener">https://blog.csdn.net/csdn_hklm/article/details/78394412</a></li><li>笛卡尔积表 <a href="http://www.cnblogs.com/cdf-opensource-007/p/6502556.html" target="_blank" rel="noopener">http://www.cnblogs.com/cdf-opensource-007/p/6502556.html</a></li><li>慎用子查询 <a href="https://www.cnblogs.com/cdf-opensource-007/p/6540521.html" target="_blank" rel="noopener">https://www.cnblogs.com/cdf-opensource-007/p/6540521.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;查询sql语句的执行流程&quot;&gt;&lt;a href=&quot;#查询sql语句的执行流程&quot; class=&quot;headerlink&quot; title=&quot;查询sql语句的执行流程&quot;&gt;&lt;/a&gt;查询sql语句的执行流程&lt;/h3&gt;&lt;p&gt;根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数&lt;/
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/MySQL/"/>
+    
+    
+      <category term="性能优化" scheme="http://yoursite.com/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>存儲引擎對比</title>
+    <link href="http://yoursite.com/2019/02/16/%E5%AD%98%E5%84%B2%E5%BC%95%E6%93%8E%E5%B0%8D%E6%AF%94/"/>
+    <id>http://yoursite.com/2019/02/16/存儲引擎對比/</id>
+    <published>2019-02-16T09:42:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="LevelDb"><a href="#LevelDb" class="headerlink" title="LevelDb"></a>LevelDb</h2><p>适用场景：多些少读<br>|   |   |<br>| —————— | —————— |<br>|   |   |<br>|   |   |</p><h2 id="RocksDB"><a href="#RocksDB" class="headerlink" title="RocksDB"></a>RocksDB</h2><h2 id="LMDB"><a href="#LMDB" class="headerlink" title="LMDB"></a>LMDB</h2>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;LevelDb&quot;&gt;&lt;a href=&quot;#LevelDb&quot; class=&quot;headerlink&quot; title=&quot;LevelDb&quot;&gt;&lt;/a&gt;LevelDb&lt;/h2&gt;&lt;p&gt;适用场景：多些少读&lt;br&gt;|   |   |&lt;br&gt;| —————— | —————— |&lt;br&gt;|
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/MySQL/"/>
+    
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+      <category term="大数据" scheme="http://yoursite.com/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MySQL-分区及中间件简介</title>
+    <link href="http://yoursite.com/2019/02/06/mysql%E4%B8%AD%E9%97%B4%E4%BB%B6%E5%AF%B9%E6%AF%94/"/>
+    <id>http://yoursite.com/2019/02/06/mysql中间件对比/</id>
+    <published>2019-02-06T09:42:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>分类</p><ul><li><p>lib库</p><ul><li>业务直接到数据库，少一层proxy效率更高</li><li>没有proxy的lvs的单点问题</li></ul></li><li><p>proxy</p><ul><li>统一管理所有到数据库的连接，连接复用</li><li>基础查询功能抽象，减少代码耦合</li><li>易于实现监控、数据迁移、连接管理等功能</li></ul></li></ul><h3 id="sharding-jdbc（开源，lib）"><a href="#sharding-jdbc（开源，lib）" class="headerlink" title="sharding-jdbc（开源，lib）"></a>sharding-jdbc（开源，lib）</h3><blockquote><p>当当应用框架ddframe中，从关系型数据库模块dd-rdb中分离出来的数据库水平分片框架<br>可惜是Java写的</p><h4 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h4><p>1）以jar包形式提供服务</p></blockquote><p>2）分片灵活，支持等号、between、in等多维度分片</p><p>3）sql解析，支持聚合、分组、排序、limit、or等</p><h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><p>1）分片规则：策略自定义、复数分片数</p><p>2）JDBC规范重写：针对DataSource、Connection、Statement、PreparedStatement和ResultSet接口封装</p><p>3）sql解析：druid</p><p>4）sql改写：修改逻辑表名-&gt;真实表名；替换不支持的功能，如：avg-&gt;sum和count</p><p>5）sql路由：单表路由、binding表路由、笛卡尔积路由</p><p>6）sql执行：多线程并发执行sql</p><p>7）结果归并：遍历类、排序类（归并排序）、聚合类（比较型、累加型、平均型）、分组类</p><h3 id="NewSQL"><a href="#NewSQL" class="headerlink" title="NewSQL"></a>NewSQL</h3><p><a href="https://baijiahao.baidu.com/s?id=1592030931074047993&amp;wfr=spider&amp;for=pc" target="_blank" rel="noopener">https://baijiahao.baidu.com/s?id=1592030931074047993&amp;wfr=spider&amp;for=pc</a></p><h3 id="mycat（开源，proxy）"><a href="#mycat（开源，proxy）" class="headerlink" title="mycat（开源，proxy）"></a>mycat（开源，proxy）</h3><blockquote><p>社区爱好者在阿里cobar基础上进行二次开发，解决了cobar的一些问题，且加入了新的功能。<br>不适用场景<br><a href="https://www.sohu.com/a/211953442_470018" target="_blank" rel="noopener">https://www.sohu.com/a/211953442_470018</a></p></blockquote><h3 id="MaxScale"><a href="#MaxScale" class="headerlink" title="MaxScale"></a>MaxScale</h3><blockquote><p>mariadb (MySQL原作者维护的一个版本)研发，目前版本不支持分库分表。</p></blockquote><h3 id="MySQL-Route"><a href="#MySQL-Route" class="headerlink" title="MySQL Route"></a>MySQL Route</h3><blockquote><p>MySQL 官方Oracle公司发布出来的一个中间件</p></blockquote><h3 id="Atlas"><a href="#Atlas" class="headerlink" title="Atlas"></a>Atlas</h3><blockquote><p>360团队基于 mysql proxy 把lua用c改写，在高并发下经常会挂掉。</p></blockquote><h3 id="DBproxy（开源，proxy）"><a href="#DBproxy（开源，proxy）" class="headerlink" title="DBproxy（开源，proxy）"></a>DBproxy（开源，proxy）</h3><blockquote><p>针对atlas进行改进，形成了新的高可靠、高可用企业级数据库中间件DBProxy</p></blockquote><h3 id="oneproxy（不开源，proxy）"><a href="#oneproxy（不开源，proxy）" class="headerlink" title="oneproxy（不开源，proxy）"></a>oneproxy（不开源，proxy）</h3><blockquote><p>基于mysql协议的数据库中间件。利用c进行开发的，专注于性能和稳定性。</p></blockquote><h3 id="vitess"><a href="#vitess" class="headerlink" title="vitess"></a>vitess</h3><blockquote><p>Youtube上产使用的，架构复杂，不支持MySQL原生协议</p></blockquote><h3 id="TDDL"><a href="#TDDL" class="headerlink" title="TDDL"></a>TDDL</h3><blockquote><p>Tabao开发，主要解决了分库分表对应用的透明化以及异构数据库之间的数据复制。<br>复杂度相对较高。当前公布的文档较少，只开源动态数据源，分表分库部分还未开源，还需要依赖diamond，不推荐使用。</p></blockquote><h3 id="DBProxy"><a href="#DBProxy" class="headerlink" title="DBProxy"></a>DBProxy</h3><blockquote><p>美团点评基于 Atlas 的改进。<br>其特性主要有：读写分离、负载均衡、支持分表、IP过滤、sql语句黑名单、DBA平滑下线DB、从库流量配置、动态加载配置项</p></blockquote><p><strong>参考</strong></p><ul><li><a href="https://www.cnblogs.com/mliudong/p/3625522.html" target="_blank" rel="noopener">https://www.cnblogs.com/mliudong/p/3625522.html</a></li><li><a href="https://www.cnblogs.com/taoxinrui/p/6782791.html" target="_blank" rel="noopener">https://www.cnblogs.com/taoxinrui/p/6782791.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;中间件&quot;&gt;&lt;a href=&quot;#中间件&quot; class=&quot;headerlink&quot; title=&quot;中间件&quot;&gt;&lt;/a&gt;中间件&lt;/h2&gt;&lt;p&gt;分类&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;lib库&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;业务直接到数据库，少一层proxy效率更高&lt;/li&gt;
+&lt;l
+      
+    
+    </summary>
+    
+      <category term="数据存储" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/MySQL/"/>
+    
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+      <category term="大数据" scheme="http://yoursite.com/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于拖拽排序的后端存储设计</title>
+    <link href="http://yoursite.com/2019/02/04/%E5%85%B3%E4%BA%8E%E6%8B%96%E6%8B%BD%E6%8E%92%E5%BA%8F%E7%9A%84%E5%90%8E%E7%AB%AF%E5%AD%98%E5%82%A8%E8%AE%BE%E8%AE%A1/"/>
+    <id>http://yoursite.com/2019/02/04/关于拖拽排序的后端存储设计/</id>
+    <published>2019-02-04T05:37:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><div class="table-container"><table><thead><tr><th>课程</th><th>讲师</th><th>排序</th></tr></thead><tbody><tr><td>课程1</td><td>1</td><td>1</td></tr><tr><td>课程2</td><td>1</td><td>2</td></tr><tr><td>课程3</td><td>1</td><td>3</td></tr><tr><td>课程4</td><td>1</td><td>4</td></tr><tr><td>课程5</td><td>1</td><td>5</td></tr><tr><td>课程6</td><td>1</td><td>6</td></tr></tbody></table></div><p>可以随意调整课程顺序，如：将<code>课程1</code>调到<code>课程3</code>和<code>课程4</code>之间</p><div class="table-container"><table><thead><tr><th>课程</th><th>排序</th></tr></thead><tbody><tr><td>课程2</td><td>1</td></tr><tr><td>课程3</td><td>2</td></tr><tr><td>课程1</td><td>3</td></tr><tr><td>课程4</td><td>4</td></tr><tr><td>课程5</td><td>5</td></tr><tr><td>课程6</td><td>6</td></tr></tbody></table></div><p>单次涉及变更的课程数量没有限制，大多为100以内，也有200+的，极少数超过300;<br>总课程数量为1千万左右</p><h2 id="存储方案"><a href="#存储方案" class="headerlink" title="存储方案"></a>存储方案</h2><h3 id="1-mysql-直接存排序"><a href="#1-mysql-直接存排序" class="headerlink" title="1. mysql 直接存排序"></a>1. mysql 直接存排序</h3><p>一次变更需要多个update<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update table set orderField = orderField + 1 where orderField &gt; (select orderField from table where id = currentID)</span><br><span class="line">update table set orderField = orderField + 1 where id = currentID</span><br></pre></td></tr></table></figure></p><p>第一个update语句，用到了子查询，或许会很慢，可以伪造数据试一下</p><h3 id="2-mysql-存优先级"><a href="#2-mysql-存优先级" class="headerlink" title="2. mysql 存优先级"></a>2. mysql 存优先级</h3><p>优先级越大排序越靠前</p><div class="table-container"><table><thead><tr><th>ID</th><th>课程</th><th>优先级</th></tr></thead><tbody><tr><td>1</td><td>课程1</td><td>6</td></tr><tr><td>2</td><td>课程2</td><td>5</td></tr><tr><td>3</td><td>课程3</td><td>4</td></tr><tr><td>4</td><td>课程4</td><td>3</td></tr><tr><td>5</td><td>课程5</td><td>2</td></tr><tr><td>6</td><td>课程6</td><td>1</td></tr></tbody></table></div><p>将<code>课程1</code>调到<code>课程3</code>和<code>课程4</code>之间，为方便处理，让优先级为float（否则和排序方案1并无区别）</p><div class="table-container"><table><thead><tr><th>ID</th><th>课程</th><th>优先级</th></tr></thead><tbody><tr><td>2</td><td>课程2</td><td>5</td></tr><tr><td>3</td><td>课程3</td><td>4</td></tr><tr><td>1</td><td>课程1</td><td>3.5</td></tr><tr><td>4</td><td>课程4</td><td>3</td></tr><tr><td>5</td><td>课程5</td><td>2</td></tr><tr><td>6</td><td>课程6</td><td>1</td></tr></tbody></table></div><p>但总有可能，多个id的优先级一样，不是很稳妥</p><h3 id="3-redis-list"><a href="#3-redis-list" class="headerlink" title="3. redis list"></a>3. redis list</h3><p>利用reids的列表<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 将`课程1`的ID加到`课程3`和`课程4`之间</span><br><span class="line">LINSERT lecture:list BEFORE &quot;课程4-ID&quot; &quot;课程1-ID&quot;</span><br><span class="line"># 删除`课程1`的ID</span><br><span class="line">LREM lecture:list 1 value &quot;课程1-ID&quot;</span><br></pre></td></tr></table></figure></p><p>先去查redis，再根据列表顺序排序</p><h3 id="4-mysql-json-list"><a href="#4-mysql-json-list" class="headerlink" title="4. mysql json:list"></a>4. mysql json:list</h3><p>思路和方案3差不多，只是列表改为mysql的json实现，不知道具体效率如何</p><h3 id="5-mysql-最暴力，逐条update"><a href="#5-mysql-最暴力，逐条update" class="headerlink" title="5. mysql 最暴力，逐条update"></a>5. mysql 最暴力，逐条update</h3><p>实际查看原来的项目后，发现用的是for循环多次调用update…非常不建议…</p><h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><h3 id="讲师课程，数量-100"><a href="#讲师课程，数量-100" class="headerlink" title="讲师课程，数量 100"></a>讲师课程，数量 100</h3><div class="table-container"><table><thead><tr><th>方案</th><th>查看课程列表</th><th>倒序</th><th>末位-&gt;中间</th><th>中间-&gt;首位</th><th>末位-&gt;首位</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>3</td><td>3</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>4</td><td>4</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>5</td><td>5</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></tbody></table></div><h3 id="讲师课程，数量-200"><a href="#讲师课程，数量-200" class="headerlink" title="讲师课程，数量 200"></a>讲师课程，数量 200</h3><div class="table-container"><table><thead><tr><th>方案</th><th>查看课程列表</th><th>倒序</th><th>末位-&gt;中间</th><th>中间-&gt;首位</th><th>末位-&gt;首位</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>3</td><td>3</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>4</td><td>4</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>5</td><td>5</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></tbody></table></div><h3 id="讲师课程，数量-300"><a href="#讲师课程，数量-300" class="headerlink" title="讲师课程，数量 300"></a>讲师课程，数量 300</h3><div class="table-container"><table><thead><tr><th>方案</th><th>查看课程列表</th><th>倒序</th><th>末位-&gt;中间</th><th>中间-&gt;首位</th><th>末位-&gt;首位</th></tr></thead><tbody><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>2</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>3</td><td>3</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>4</td><td>4</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>5</td><td>5</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></tbody></table></div>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;需求&quot;&gt;&lt;a href=&quot;#需求&quot; class=&quot;headerlink&quot; title=&quot;需求&quot;&gt;&lt;/a&gt;需求&lt;/h2&gt;&lt;div class=&quot;table-container&quot;&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;课程&lt;/th&gt;
+&lt;th&gt;讲师&lt;/th
+      
+    
+    </summary>
+    
+      <category term="项目案例" scheme="http://yoursite.com/categories/%E9%A1%B9%E7%9B%AE%E6%A1%88%E4%BE%8B/"/>
+    
+    
+      <category term="项目案例" scheme="http://yoursite.com/tags/%E9%A1%B9%E7%9B%AE%E6%A1%88%E4%BE%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>读《人月神话》</title>
@@ -48,6 +283,33 @@
   </entry>
   
   <entry>
+    <title>所谓设计模式</title>
+    <link href="http://yoursite.com/2019/01/20/%E6%89%80%E8%B0%93%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    <id>http://yoursite.com/2019/01/20/所谓设计模式/</id>
+    <published>2019-01-20T02:02:41.000Z</published>
+    <updated>2019-03-17T15:09:33.364Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。<br>而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。</p></blockquote><h1 id="创建模式"><a href="#创建模式" class="headerlink" title="创建模式"></a>创建模式</h1><h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><p>对于一个方法，需要在多种情景下调用。如发送消息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">class SendModule:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    发生消息的原型</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">class EMail(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景1</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过邮件发送&quot;)</span><br><span class="line">        </span><br><span class="line">class SMS(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景2</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过短信发送&quot;)</span><br><span class="line"></span><br><span class="line">class SendFactory:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self, type):</span><br><span class="line">        if type == 1:</span><br><span class="line">            EMail().send()</span><br><span class="line">        else:</span><br><span class="line">            SMS().send()</span><br></pre></td></tr></table></figure></p><p>更实际的，直接将SendFactory用方法来封装。<br>这里只返回哪个类对象，send方法让具体的业务调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def sender_factory(type):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        if type == 1:</span><br><span class="line">            return EMail()</span><br><span class="line">        else:</span><br><span class="line">            return SMS()</span><br></pre></td></tr></table></figure></p><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>不需要用 sender_factory 来选择用哪个情景，直接根据具体的业务场景来调用 EMail().send() / SMS().send()。<br>免去了改 sender_factory 逻辑的烦恼。<br>其实简单工厂和工厂，主要的核心还是在于有一个相同的方法send，分别用于多种类。</p><h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p>将组装的部分（产品）放在一个工厂类里面，组成一个实体。<br>也可以认为前面的工厂模式是这里的产品。<br>注意，各产品的统一方法，各工厂的统一方法。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">class 鸭子头:</span><br><span class="line">    def talk(self):</span><br><span class="line">        print(&quot;鸭子叫&quot;)</span><br><span class="line">class 鸭子身体:</span><br><span class="line">    def move(self):</span><br><span class="line">        print(&quot;鸭子摆尾巴&quot;)</span><br><span class="line">class 鸭子肢体:</span><br><span class="line">    def walk(self):</span><br><span class="line">        print(&quot;鸭子走路&quot;)</span><br><span class="line"></span><br><span class="line">class 鸡头:</span><br><span class="line">    def talk(self):</span><br><span class="line">        print(&quot;鸡鸣&quot;)</span><br><span class="line">class 鸡身体:</span><br><span class="line">    def move(self):</span><br><span class="line">        print(&quot;鸡摆尾巴&quot;)</span><br><span class="line">class 鸡肢体:</span><br><span class="line">    def walk(self):</span><br><span class="line">        print(&quot;鸡走路&quot;)</span><br><span class="line"></span><br><span class="line">class 鸭子:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    本工厂包含了多个产品</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def show():</span><br><span class="line">        return 鸭子头() + 鸭子身体() + 鸭子肢体()</span><br><span class="line"></span><br><span class="line">class 鸡:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    本工厂包含了多个产品</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def show():</span><br><span class="line">        return 鸡头() + 鸡身体() + 鸡肢体()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Test(factory):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的使用</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    factory.show()</span><br></pre></td></tr></table></figure><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>对 python ，class 默认就是单例</p><p>优点：</p><ul><li>优化内存占用</li></ul><h2 id="建造者模式"><a href="#建造者模式" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><h1 id="结构型模式"><a href="#结构型模式" class="headerlink" title="结构型模式"></a>结构型模式</h1><h2 id="建造者模式-1"><a href="#建造者模式-1" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-2"><a href="#建造者模式-2" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-3"><a href="#建造者模式-3" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-4"><a href="#建造者模式-4" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-5"><a href="#建造者模式-5" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-6"><a href="#建造者模式-6" class="headerlink" title="建造者模式"></a>建造者模式</h2><ul><li>参考 *</li></ul><ul><li><a href="https://www.cnblogs.com/geek6/p/3951677.html" target="_blank" rel="noopener">https://www.cnblogs.com/geek6/p/3951677.html</a></li><li>《精通python设计模式》</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。&lt;br&gt;而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。&lt;/p&gt;
+&lt;/blockquote&gt;
+      
+    
+    </summary>
+    
+      <category term="软件设计" scheme="http://yoursite.com/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/"/>
+    
+    
+      <category term="软件设计" scheme="http://yoursite.com/tags/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
     <title>所谓设计模式-六大原则</title>
     <link href="http://yoursite.com/2019/01/20/%E6%89%80%E8%B0%93%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/"/>
     <id>http://yoursite.com/2019/01/20/所谓设计模式-六大原则/</id>
@@ -73,29 +335,28 @@
   </entry>
   
   <entry>
-    <title>所谓设计模式</title>
-    <link href="http://yoursite.com/2019/01/20/%E6%89%80%E8%B0%93%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    <id>http://yoursite.com/2019/01/20/所谓设计模式/</id>
-    <published>2019-01-20T02:02:41.000Z</published>
+    <title>关于python的代码规范</title>
+    <link href="http://yoursite.com/2018/12/25/%E5%85%B3%E4%BA%8Epython%E7%9A%84%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
+    <id>http://yoursite.com/2018/12/25/关于python的代码规范/</id>
+    <published>2018-12-25T14:02:41.000Z</published>
     <updated>2019-01-20T05:39:33.407Z</updated>
     
-    <content type="html"><![CDATA[<blockquote><p>个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。<br>而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。</p></blockquote><h1 id="创建模式"><a href="#创建模式" class="headerlink" title="创建模式"></a>创建模式</h1><h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><p>对于一个方法，需要在多种情景下调用。如发送消息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">class SendModule:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    发生消息的原型</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">class EMail(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景1</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过邮件发送&quot;)</span><br><span class="line">        </span><br><span class="line">class SMS(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景2</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过短信发送&quot;)</span><br><span class="line"></span><br><span class="line">class SendFactory:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self, type):</span><br><span class="line">        if type == 1:</span><br><span class="line">            EMail().send()</span><br><span class="line">        else:</span><br><span class="line">            SMS().send()</span><br></pre></td></tr></table></figure></p><p>更实际的，直接将SendFactory用方法来封装。<br>这里只返回哪个类对象，send方法让具体的业务调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def sender_factory(type):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        if type == 1:</span><br><span class="line">            return EMail()</span><br><span class="line">        else:</span><br><span class="line">            return SMS()</span><br></pre></td></tr></table></figure></p><h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>不需要用 sender_factory 来选择用哪个情景，直接根据具体的业务场景来调用 EMail().send() / SMS().send()。<br>免去了改 sender_factory 逻辑的烦恼。<br>其实简单工厂和工厂，主要的核心还是在于有一个相同的方法send，分别用于多种类。</p><h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p>将组装的部分放在一个类里面，组成一个实体</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class 头:</span><br><span class="line">    pass</span><br><span class="line">class 身体:</span><br><span class="line">    pass</span><br><span class="line">class 肢体:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">class 鸭子:</span><br><span class="line">    return 头() + 身体() + 肢体()</span><br></pre></td></tr></table></figure><h2 id="工厂模式-1"><a href="#工厂模式-1" class="headerlink" title="工厂模式"></a>工厂模式</h2><ul><li>参考 *</li></ul><ul><li><a href="https://www.cnblogs.com/geek6/p/3951677.html" target="_blank" rel="noopener">https://www.cnblogs.com/geek6/p/3951677.html</a></li><li>《精通python设计模式》</li></ul>]]></content>
+    <content type="html"><![CDATA[<p>为了代码的易读性，方便团队多人协作，请大家统一按此标准去规范自己的代码。</p><h2 id="PEP8"><a href="#PEP8" class="headerlink" title="PEP8"></a>PEP8</h2><p>PEP8是 python 的代码规范标准，具体细节参考下面链接，在此不多叙述。</p><ul><li>原文 <a href="https://www.python.org/dev/peps/pep-0008/" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0008/</a></li><li>中文翻译 <a href="https://blog.csdn.net/ratsniper/article/details/78954852" target="_blank" rel="noopener">https://blog.csdn.net/ratsniper/article/details/78954852</a></li></ul><p>可以用一些工具，如<code>atuopep8</code>去做辅助校验。</p><h2 id="保持代码简洁"><a href="#保持代码简洁" class="headerlink" title="保持代码简洁"></a>保持代码简洁</h2><p>不用的代码，不管是废弃的功能，还是未来有用，但目前用不上的，都删除。<br>如果需要，再从git版本记录中找回。<br>lib中的统一工具除外。</p><h2 id="内部命名规范"><a href="#内部命名规范" class="headerlink" title="内部命名规范"></a>内部命名规范</h2><ul><li>数量 count</li><li>开始时间 begin_time</li><li>结束时间 end_time</li><li>分页，起始值 offset，数量 limit</li><li>关键字查找，参数为q，代码中的变量为key_word</li></ul><h2 id="sql语句"><a href="#sql语句" class="headerlink" title="sql语句"></a>sql语句</h2><p>sql语句被包装成字符串，一般工具无法对此进行格式化校验，但仍需遵循以下规则：</p><h3 id="关键字大写"><a href="#关键字大写" class="headerlink" title="关键字大写"></a>关键字大写</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id,name from test_barrage where id = 3;</span><br></pre></td></tr></table></figure><p>修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3;</span><br></pre></td></tr></table></figure><h3 id="缩进"><a href="#缩进" class="headerlink" title="缩进"></a>缩进</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3 and type=2 ORDER BY id;</span><br></pre></td></tr></table></figure><p>错误点：</p><ol><li><code>type=2</code>空格前后应有空格<code>type = 2</code></li><li>sql语句过长，<code>SELECT</code>、<code>WHERE</code>、<code>ORDER BY</code> 需要一行一个</li><li><code>WHERE</code>条件一行一个</li></ol><p>修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage </span><br><span class="line">WHERE id = 3 </span><br><span class="line">    and type=2 </span><br><span class="line">ORDER BY id;</span><br></pre></td></tr></table></figure><h3 id="慎用"><a href="#慎用" class="headerlink" title="慎用*"></a>慎用*</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test_barrage where id = 3;</span><br></pre></td></tr></table></figure><p>如果不是必要，修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3;</span><br></pre></td></tr></table></figure><h3 id="参数化"><a href="#参数化" class="headerlink" title="参数化"></a>参数化</h3><p>为了防止sql注入，pymysql提供了两种参数校验方式</p><ol><li><p>列表传参</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql = &quot;SELECT `id`, `password` </span><br><span class="line">        FROM `users` </span><br><span class="line">        WHERE `email`=%s&quot;</span><br><span class="line">cursor.execute(sql, [&apos;webmaster@python.org&apos;])</span><br></pre></td></tr></table></figure></li><li><p>字典传参</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql = &quot;SELECT `id`, `password` </span><br><span class="line">        FROM `users` </span><br><span class="line">        WHERE `email`=%(email)s&quot;</span><br><span class="line">cursor.execute(sql, &#123;&quot;email&quot;:&apos;webmaster@python.org&apos;&#125;)</span><br></pre></td></tr></table></figure></li></ol><p>第一种比较容易出错，统一采用第二种</p><h2 id="pylint"><a href="#pylint" class="headerlink" title="pylint"></a>pylint</h2><p>代码提交前用 pylint 进行对代码规范进行打分，9.5以上方为合格。具体使用方法请参考：</p><ul><li><a href="https://pypi.org/project/pylint/" target="_blank" rel="noopener">https://pypi.org/project/pylint/</a></li><li><a href="https://www.cnblogs.com/zhangningyang/p/8652941.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhangningyang/p/8652941.html</a></li><li><a href="https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/index.html</a></li></ul>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;blockquote&gt;
-&lt;p&gt;个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。&lt;br&gt;而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。&lt;/p&gt;
-&lt;/blockquote&gt;
+        &lt;p&gt;为了代码的易读性，方便团队多人协作，请大家统一按此标准去规范自己的代码。&lt;/p&gt;
+&lt;h2 id=&quot;PEP8&quot;&gt;&lt;a href=&quot;#PEP8&quot; class=&quot;headerlink&quot; title=&quot;PEP8&quot;&gt;&lt;/a&gt;PEP8&lt;/h2&gt;&lt;p&gt;PEP8是 python 的代码规范
       
     
     </summary>
     
-      <category term="软件设计" scheme="http://yoursite.com/categories/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/"/>
+      <category term="代码规范" scheme="http://yoursite.com/categories/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
     
     
-      <category term="软件设计" scheme="http://yoursite.com/tags/%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1/"/>
+      <category term="代码规范" scheme="http://yoursite.com/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
     
   </entry>
   
@@ -131,32 +392,6 @@
   </entry>
   
   <entry>
-    <title>关于python的代码规范</title>
-    <link href="http://yoursite.com/2018/12/25/%E5%85%B3%E4%BA%8Epython%E7%9A%84%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
-    <id>http://yoursite.com/2018/12/25/关于python的代码规范/</id>
-    <published>2018-12-25T14:02:41.000Z</published>
-    <updated>2019-01-20T05:39:33.407Z</updated>
-    
-    <content type="html"><![CDATA[<p>为了代码的易读性，方便团队多人协作，请大家统一按此标准去规范自己的代码。</p><h2 id="PEP8"><a href="#PEP8" class="headerlink" title="PEP8"></a>PEP8</h2><p>PEP8是 python 的代码规范标准，具体细节参考下面链接，在此不多叙述。</p><ul><li>原文 <a href="https://www.python.org/dev/peps/pep-0008/" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0008/</a></li><li>中文翻译 <a href="https://blog.csdn.net/ratsniper/article/details/78954852" target="_blank" rel="noopener">https://blog.csdn.net/ratsniper/article/details/78954852</a></li></ul><p>可以用一些工具，如<code>atuopep8</code>去做辅助校验。</p><h2 id="保持代码简洁"><a href="#保持代码简洁" class="headerlink" title="保持代码简洁"></a>保持代码简洁</h2><p>不用的代码，不管是废弃的功能，还是未来有用，但目前用不上的，都删除。<br>如果需要，再从git版本记录中找回。<br>lib中的统一工具除外。</p><h2 id="内部命名规范"><a href="#内部命名规范" class="headerlink" title="内部命名规范"></a>内部命名规范</h2><ul><li>数量 count</li><li>开始时间 begin_time</li><li>结束时间 end_time</li><li>分页，起始值 offset，数量 limit</li><li>关键字查找，参数为q，代码中的变量为key_word</li></ul><h2 id="sql语句"><a href="#sql语句" class="headerlink" title="sql语句"></a>sql语句</h2><p>sql语句被包装成字符串，一般工具无法对此进行格式化校验，但仍需遵循以下规则：</p><h3 id="关键字大写"><a href="#关键字大写" class="headerlink" title="关键字大写"></a>关键字大写</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id,name from test_barrage where id = 3;</span><br></pre></td></tr></table></figure><p>修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3;</span><br></pre></td></tr></table></figure><h3 id="缩进"><a href="#缩进" class="headerlink" title="缩进"></a>缩进</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3 and type=2 ORDER BY id;</span><br></pre></td></tr></table></figure><p>错误点：</p><ol><li><code>type=2</code>空格前后应有空格<code>type = 2</code></li><li>sql语句过长，<code>SELECT</code>、<code>WHERE</code>、<code>ORDER BY</code> 需要一行一个</li><li><code>WHERE</code>条件一行一个</li></ol><p>修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage </span><br><span class="line">WHERE id = 3 </span><br><span class="line">    and type=2 </span><br><span class="line">ORDER BY id;</span><br></pre></td></tr></table></figure><h3 id="慎用"><a href="#慎用" class="headerlink" title="慎用*"></a>慎用*</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from test_barrage where id = 3;</span><br></pre></td></tr></table></figure><p>如果不是必要，修正为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT id,name FROM test_barrage WHERE id = 3;</span><br></pre></td></tr></table></figure><h3 id="参数化"><a href="#参数化" class="headerlink" title="参数化"></a>参数化</h3><p>为了防止sql注入，pymysql提供了两种参数校验方式</p><ol><li><p>列表传参</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql = &quot;SELECT `id`, `password` </span><br><span class="line">        FROM `users` </span><br><span class="line">        WHERE `email`=%s&quot;</span><br><span class="line">cursor.execute(sql, [&apos;webmaster@python.org&apos;])</span><br></pre></td></tr></table></figure></li><li><p>字典传参</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sql = &quot;SELECT `id`, `password` </span><br><span class="line">        FROM `users` </span><br><span class="line">        WHERE `email`=%(email)s&quot;</span><br><span class="line">cursor.execute(sql, &#123;&quot;email&quot;:&apos;webmaster@python.org&apos;&#125;)</span><br></pre></td></tr></table></figure></li></ol><p>第一种比较容易出错，统一采用第二种</p><h2 id="pylint"><a href="#pylint" class="headerlink" title="pylint"></a>pylint</h2><p>代码提交前用 pylint 进行对代码规范进行打分，9.5以上方为合格。具体使用方法请参考：</p><ul><li><a href="https://pypi.org/project/pylint/" target="_blank" rel="noopener">https://pypi.org/project/pylint/</a></li><li><a href="https://www.cnblogs.com/zhangningyang/p/8652941.html" target="_blank" rel="noopener">https://www.cnblogs.com/zhangningyang/p/8652941.html</a></li><li><a href="https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/index.html" target="_blank" rel="noopener">https://www.ibm.com/developerworks/cn/linux/l-cn-pylint/index.html</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;为了代码的易读性，方便团队多人协作，请大家统一按此标准去规范自己的代码。&lt;/p&gt;
-&lt;h2 id=&quot;PEP8&quot;&gt;&lt;a href=&quot;#PEP8&quot; class=&quot;headerlink&quot; title=&quot;PEP8&quot;&gt;&lt;/a&gt;PEP8&lt;/h2&gt;&lt;p&gt;PEP8是 python 的代码规范
-      
-    
-    </summary>
-    
-      <category term="代码规范" scheme="http://yoursite.com/categories/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
-    
-    
-      <category term="代码规范" scheme="http://yoursite.com/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/"/>
-    
-  </entry>
-  
-  <entry>
     <title>URL命名规范</title>
     <link href="http://yoursite.com/2018/12/25/URL%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83/"/>
     <id>http://yoursite.com/2018/12/25/URL命名规范/</id>
@@ -187,9 +422,9 @@
     <link href="http://yoursite.com/2018/12/20/flask%E5%88%B7%E6%96%B0%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE/"/>
     <id>http://yoursite.com/2018/12/20/flask刷新内存配置/</id>
     <published>2018-12-20T14:02:41.000Z</published>
-    <updated>2019-01-20T05:39:33.373Z</updated>
+    <updated>2019-03-17T15:09:33.364Z</updated>
     
-    <content type="html"><![CDATA[<h4 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h4><p>程序中的配置，怎么能够实时更新。<br>其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，<br>其本质也还都配置的管理，都可以参考服务发现那套逻辑。</p><h4 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h4><ol><li>对外暴露一个接口，用于刷新配置</li><li>定时加载配置到服务中</li><li>每次接口调用都实时去加载配置</li></ol><h4 id="各方案优缺点"><a href="#各方案优缺点" class="headerlink" title="各方案优缺点"></a>各方案优缺点</h4><ol><li>对外暴露一个接口，用于刷新配置<ol><li>稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。</li></ol></li><li>定时加载配置到服务中 <ol><li>需要等待刷新的时间，配置人员要等待，不具备实时性</li><li>无法很好的把控程序刷新时机，如果要同时改多个配置，可能会有配置改到一半就被刷新的风险</li></ol></li><li>每次接口调用都实时去加载配置<ol><li>简单，但是配置多或访问量大的情况不适合</li><li>优化，将配置更新时间存在redis中，每次访问redis，和本地的更新时间做比较，不一致则更新。</li></ol></li></ol><blockquote><p>目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路</p></blockquote><h4 id="以往的方案"><a href="#以往的方案" class="headerlink" title="以往的方案"></a>以往的方案</h4><p>采用第一种。<br>用的twisted或tornado异步处理请求，每个进程分别对应两个端口，分别对内和对外提供服务。<br>对内服务主要用于刷新配置和设置临时变量。<br>如果要刷新配置，只要调用对应的内部端口即可。</p><h4 id="新的问题"><a href="#新的问题" class="headerlink" title="新的问题"></a>新的问题</h4><p>目前团队用的flask，采用wsgi管理多个进程，而多个进程的端口都是同一个。<br>怎么样才能让所有的进程都同步到最新的配置呢？</p><h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul><li><a href="https://www.jianshu.com/p/75e1107530b1" target="_blank" rel="noopener">https://www.jianshu.com/p/75e1107530b1</a></li></ul>]]></content>
+    <content type="html"><![CDATA[<h4 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h4><p>程序中的配置，怎么能够实时更新。<br>其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，<br>其本质也还都配置的管理，可以参考服务发现那套逻辑。</p><blockquote><p>目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路</p></blockquote><h4 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h4><ol><li>对外暴露一个接口，用于刷新配置</li><li>定时加载配置到服务中</li><li>每次接口调用都实时去加载配置</li></ol><h4 id="各方案优缺点"><a href="#各方案优缺点" class="headerlink" title="各方案优缺点"></a>各方案优缺点</h4><ol><li><p>对外暴露一个接口，用于刷新配置</p><blockquote><p>本质上就是进程间通讯</p></blockquote><p> <br>缺点：</p><ul><li><p>稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。</p><p><br>优点：</p></li><li>实时性强</li><li>对业务系统的消耗最低</li></ul></li><li><p>定时加载配置到服务中<br> <br>缺点：</p><ul><li>需要等待刷新的时间，配置人员要等待，不具备实时性</li><li><p>无法很好的把控程序刷新时机，如果要同时改多个配置，可能会有配置改到一半就被刷新的风险</p><p><br>优点：</p></li><li>开发时省事</li></ul></li><li><p>每次接口调用都实时去加载配置<br> <br>缺点：</p><ul><li><p>对业务系统的消耗较高</p><p><br>优点：</p></li><li><p>简单，但是配置多或访问量大的情况不适合<br><br>优化：</p></li><li>数据量大的情况：将配置更新时间存在redis中，每次访问redis，和本地的更新时间做比较，不一致则更新。</li><li>数据量小的情况：将配置存在redis中，做比较，不一致则更新。</li><li>并发量较大：加上内存过期机制，若实时性较高，可以只保存2-3秒；还是采用多级缓存的思路。</li></ul></li></ol><h4 id="以往的方案"><a href="#以往的方案" class="headerlink" title="以往的方案"></a>以往的方案</h4><p>采用第一种。<br>用的twisted或tornado异步处理请求，每个进程分别对应两个端口，分别对内和对外提供服务。<br>对内服务主要用于刷新配置和设置临时变量。<br>如果要刷新配置，只要调用对应的内部端口即可。</p><h4 id="新的问题"><a href="#新的问题" class="headerlink" title="新的问题"></a>新的问题</h4><p>目前团队用的flask，采用wsgi管理多个进程，而多个进程的端口都是同一个。<br>怎么样才能让所有的进程都同步到最新的配置呢？</p><h4 id="目前的结论"><a href="#目前的结论" class="headerlink" title="目前的结论"></a>目前的结论</h4><ul><li>方案2是个坑；flask 可以用方案3；并发量特别大的时候，采用方案1。</li><li>方案1要实现同一端口的多进程调用，只能对wsgi再封装，如非必要，先放弃。</li></ul><h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul><li><a href="https://www.jianshu.com/p/75e1107530b1" target="_blank" rel="noopener">https://www.jianshu.com/p/75e1107530b1</a></li></ul>]]></content>
     
     <summary type="html">
     
@@ -200,7 +435,9 @@
     
     </summary>
     
-      <category term="服务发现" scheme="http://yoursite.com/categories/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/"/>
+      <category term="微服务" scheme="http://yoursite.com/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
+    
+      <category term="服务发现" scheme="http://yoursite.com/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/"/>
     
     
       <category term="服务发现" scheme="http://yoursite.com/tags/%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0/"/>

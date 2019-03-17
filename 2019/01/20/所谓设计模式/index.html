@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="李庭嘉的博客">
 <meta property="og:description" content="个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。  创建模式简单工厂模式对于一个方法，需要在多种情景下调用。如发送消息：12345678910111213141516171819202122232425262728293031class Se">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-20T05:39:33.407Z">
+<meta property="og:updated_time" content="2019-03-17T15:09:33.364Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="所谓设计模式">
 <meta name="twitter:description" content="个人观点：对于 python 来说，它本来就是一个很灵活的语言，要想实现相应的功能，并不一定非得用这些设计模式的概念。而且每个设计模式都有各自的使用场景和优缺点，正确理解，领悟各自的适用场景才是最重要的。  创建模式简单工厂模式对于一个方法，需要在多种情景下调用。如发送消息：12345678910111213141516171819202122232425262728293031class Se">
@@ -348,9 +348,14 @@
 <h1 id="创建模式"><a href="#创建模式" class="headerlink" title="创建模式"></a>创建模式</h1><h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><p>对于一个方法，需要在多种情景下调用。如发送消息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">class SendModule:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    发生消息的原型</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        pass</span><br><span class="line"></span><br><span class="line">class EMail(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景1</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过邮件发送&quot;)</span><br><span class="line">        </span><br><span class="line">class SMS(SendModule):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的应用场景2</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        print(&quot;通过短信发送&quot;)</span><br><span class="line"></span><br><span class="line">class SendFactory:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self, type):</span><br><span class="line">        if type == 1:</span><br><span class="line">            EMail().send()</span><br><span class="line">        else:</span><br><span class="line">            SMS().send()</span><br></pre></td></tr></table></figure></p>
 <p>更实际的，直接将SendFactory用方法来封装。<br>这里只返回哪个类对象，send方法让具体的业务调用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">def sender_factory(type):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    这里就是简单工厂的部分</span><br><span class="line">    在这里判断用哪个情景来发送消息</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def send(self):</span><br><span class="line">        if type == 1:</span><br><span class="line">            return EMail()</span><br><span class="line">        else:</span><br><span class="line">            return SMS()</span><br></pre></td></tr></table></figure></p>
 <h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>不需要用 sender_factory 来选择用哪个情景，直接根据具体的业务场景来调用 EMail().send() / SMS().send()。<br>免去了改 sender_factory 逻辑的烦恼。<br>其实简单工厂和工厂，主要的核心还是在于有一个相同的方法send，分别用于多种类。</p>
-<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p>将组装的部分放在一个类里面，组成一个实体</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class 头:</span><br><span class="line">    pass</span><br><span class="line">class 身体:</span><br><span class="line">    pass</span><br><span class="line">class 肢体:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">class 鸭子:</span><br><span class="line">    return 头() + 身体() + 肢体()</span><br></pre></td></tr></table></figure>
-<h2 id="工厂模式-1"><a href="#工厂模式-1" class="headerlink" title="工厂模式"></a>工厂模式</h2><ul>
+<h2 id="抽象工厂模式"><a href="#抽象工厂模式" class="headerlink" title="抽象工厂模式"></a>抽象工厂模式</h2><p>将组装的部分（产品）放在一个工厂类里面，组成一个实体。<br>也可以认为前面的工厂模式是这里的产品。<br>注意，各产品的统一方法，各工厂的统一方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">class 鸭子头:</span><br><span class="line">    def talk(self):</span><br><span class="line">        print(&quot;鸭子叫&quot;)</span><br><span class="line">class 鸭子身体:</span><br><span class="line">    def move(self):</span><br><span class="line">        print(&quot;鸭子摆尾巴&quot;)</span><br><span class="line">class 鸭子肢体:</span><br><span class="line">    def walk(self):</span><br><span class="line">        print(&quot;鸭子走路&quot;)</span><br><span class="line"></span><br><span class="line">class 鸡头:</span><br><span class="line">    def talk(self):</span><br><span class="line">        print(&quot;鸡鸣&quot;)</span><br><span class="line">class 鸡身体:</span><br><span class="line">    def move(self):</span><br><span class="line">        print(&quot;鸡摆尾巴&quot;)</span><br><span class="line">class 鸡肢体:</span><br><span class="line">    def walk(self):</span><br><span class="line">        print(&quot;鸡走路&quot;)</span><br><span class="line"></span><br><span class="line">class 鸭子:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    本工厂包含了多个产品</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def show():</span><br><span class="line">        return 鸭子头() + 鸭子身体() + 鸭子肢体()</span><br><span class="line"></span><br><span class="line">class 鸡:</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    本工厂包含了多个产品</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    def show():</span><br><span class="line">        return 鸡头() + 鸡身体() + 鸡肢体()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class Test(factory):</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    具体的使用</span><br><span class="line">    &quot;&quot;&quot;</span><br><span class="line">    factory.show()</span><br></pre></td></tr></table></figure>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>对 python ，class 默认就是单例</p>
+<p>优点：</p>
+<ul>
+<li>优化内存占用</li>
+</ul>
+<h2 id="建造者模式"><a href="#建造者模式" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><h1 id="结构型模式"><a href="#结构型模式" class="headerlink" title="结构型模式"></a>结构型模式</h1><h2 id="建造者模式-1"><a href="#建造者模式-1" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-2"><a href="#建造者模式-2" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-3"><a href="#建造者模式-3" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-4"><a href="#建造者模式-4" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-5"><a href="#建造者模式-5" class="headerlink" title="建造者模式"></a>建造者模式</h2><h2 id="建造者模式-6"><a href="#建造者模式-6" class="headerlink" title="建造者模式"></a>建造者模式</h2><ul>
 <li>参考 *</li>
 </ul>
 <ul>
@@ -416,8 +421,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/12/25/关于服务发现的疑问/" rel="next" title="URL命名规范">
-                <i class="fa fa-chevron-left"></i> URL命名规范
+              <a href="/2019/01/20/所谓设计模式-六大原则/" rel="next" title="所谓设计模式-六大原则">
+                <i class="fa fa-chevron-left"></i> 所谓设计模式-六大原则
               </a>
             
           </div>
@@ -426,8 +431,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/01/20/所谓设计模式-六大原则/" rel="prev" title="所谓设计模式-六大原则">
-                所谓设计模式-六大原则 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/01/20/读《人月神话》/" rel="prev" title="读《人月神话》">
+                读《人月神话》 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -505,7 +510,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -516,7 +521,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -527,7 +532,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -583,7 +588,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建模式"><span class="nav-number">1.</span> <span class="nav-text">创建模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂模式"><span class="nav-number">1.1.</span> <span class="nav-text">简单工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式"><span class="nav-number">1.2.</span> <span class="nav-text">工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">1.3.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式-1"><span class="nav-number">1.4.</span> <span class="nav-text">工厂模式</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建模式"><span class="nav-number">1.</span> <span class="nav-text">创建模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简单工厂模式"><span class="nav-number">1.1.</span> <span class="nav-text">简单工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工厂模式"><span class="nav-number">1.2.</span> <span class="nav-text">工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式"><span class="nav-number">1.3.</span> <span class="nav-text">抽象工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单例模式"><span class="nav-number">1.4.</span> <span class="nav-text">单例模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式"><span class="nav-number">1.5.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原型模式"><span class="nav-number">1.6.</span> <span class="nav-text">原型模式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构型模式"><span class="nav-number">2.</span> <span class="nav-text">结构型模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-1"><span class="nav-number">2.1.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-2"><span class="nav-number">2.2.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-3"><span class="nav-number">2.3.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-4"><span class="nav-number">2.4.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-5"><span class="nav-number">2.5.</span> <span class="nav-text">建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建造者模式-6"><span class="nav-number">2.6.</span> <span class="nav-text">建造者模式</span></a></li></ol></li></ol></div>
             
 
           </div>

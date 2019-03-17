@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="性能优化,MySQL,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李庭嘉的博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="查询sql语句的执行流程根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数 1234567891011121314151617From - 将涉及的表加载到内存ON - 作为产生笛卡尔积表的挑选条件JOIN - 此处产生笛卡尔积表（A表*B表），需要大量内存WHERE - 数据进行过滤，取出符合条件的记录行，生成一张临时表GROUP BY - 将上一步的临时表切分成若干临时表SELECT -">
+<meta name="keywords" content="性能优化,MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从SQL的执行原理优化多表查询">
+<meta property="og:url" content="http://yoursite.com/2019/02/26/从SQL的执行原理优化多表查询/index.html">
+<meta property="og:site_name" content="李庭嘉的博客">
+<meta property="og:description" content="查询sql语句的执行流程根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数 1234567891011121314151617From - 将涉及的表加载到内存ON - 作为产生笛卡尔积表的挑选条件JOIN - 此处产生笛卡尔积表（A表*B表），需要大量内存WHERE - 数据进行过滤，取出符合条件的记录行，生成一张临时表GROUP BY - 将上一步的临时表切分成若干临时表SELECT -">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-17T15:09:33.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从SQL的执行原理优化多表查询">
+<meta name="twitter:description" content="查询sql语句的执行流程根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数 1234567891011121314151617From - 将涉及的表加载到内存ON - 作为产生笛卡尔积表的挑选条件JOIN - 此处产生笛卡尔积表（A表*B表），需要大量内存WHERE - 数据进行过滤，取出符合条件的记录行，生成一张临时表GROUP BY - 将上一步的临时表切分成若干临时表SELECT -">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/26/从SQL的执行原理优化多表查询/">
+
+
+
+
+
+  <title>从SQL的执行原理优化多表查询 | 李庭嘉的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李庭嘉的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">工具谁都能用，掌握原理才是核心</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/26/从SQL的执行原理优化多表查询/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Do Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李庭嘉的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从SQL的执行原理优化多表查询</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-26T17:42:41+08:00">
+                2019-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据存储/" itemprop="url" rel="index">
+                    <span itemprop="name">数据存储</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据存储/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="查询sql语句的执行流程"><a href="#查询sql语句的执行流程" class="headerlink" title="查询sql语句的执行流程"></a>查询sql语句的执行流程</h3><p>根据这个顺序，将可优化的点往前放，尽早降低后面的处理次数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">From - 将涉及的表加载到内存</span><br><span class="line"></span><br><span class="line">ON - 作为产生笛卡尔积表的挑选条件</span><br><span class="line"></span><br><span class="line">JOIN - 此处产生笛卡尔积表（A表*B表），需要大量内存</span><br><span class="line"></span><br><span class="line">WHERE - 数据进行过滤，取出符合条件的记录行，生成一张临时表</span><br><span class="line"></span><br><span class="line">GROUP BY - 将上一步的临时表切分成若干临时表</span><br><span class="line"></span><br><span class="line">SELECT - 如果有GROUP BY，会对N个临时表进行N次查询，最终形成一个新的临时表</span><br><span class="line"></span><br><span class="line">HAVING - 对SELECT 语句执行之后的临时表中的数据过滤</span><br><span class="line"></span><br><span class="line">ORDER BY</span><br><span class="line"></span><br><span class="line">LIMIT</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当两张表的数据量比较大，又需要连接查询时，应该使用 <code>FROM table1 JOIN table2 ON xxx</code> 的语法，避免使用 <code>FROM table1,table2 WHERE xxx</code> 的语法，因为后者会在内存中先生成一张数据量比较大的笛卡尔积表，增加了内存的开销。</p>
+</blockquote>
+<h3 id="计算SQL平均耗时"><a href="#计算SQL平均耗时" class="headerlink" title="计算SQL平均耗时"></a>计算SQL平均耗时</h3><p>计算 sql查询所耗费的平均时间时，要关掉mysql的查询缓存，防止多次执行从缓存中读取数据<br>可以用 <code>SQL_NO_CACHE</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE *</span><br><span class="line">FROM</span><br><span class="line">    mm_member</span><br></pre></td></tr></table></figure></p>
+<h3 id="慎用子查询"><a href="#慎用子查询" class="headerlink" title="慎用子查询"></a>慎用子查询</h3><p>mm_member 为用户表（370 行），mm_log 为登陆记录（15W 行）<br>现在要求我们根据这两张表查出2017-02-06那天有那些用户登录过系统。</p>
+<h4 id="join"><a href="#join" class="headerlink" title="join"></a>join</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.*</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">JOIN</span><br><span class="line">    mm_log ml</span><br><span class="line">ON</span><br><span class="line">    mm.id = ml.member_id</span><br><span class="line">WHERE</span><br><span class="line">    ml.access_time LIKE &apos;%2017-02-06%&apos;</span><br><span class="line">GROUP BY</span><br><span class="line">    ml.member_id;</span><br></pre></td></tr></table></figure>
+<p>运行次数 mm_member * mm_log， 但是在on这一步就把后面的运行次数降到了 mm_member 的级别。</p>
+<p>耗时：0.120s</p>
+<h4 id="子查询-in"><a href="#子查询-in" class="headerlink" title="子查询 in"></a>子查询 in</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.username</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">WHERE</span><br><span class="line">    mm.id IN (SELECT ml.member_id FROM mm_log ml WHERE ml.access_time LIKE &apos;%2017-02-06%&apos; GROUP BY ml.member_id);</span><br></pre></td></tr></table></figure>
+<p>运行次数 mm_member * mm_log， 和我们以为的不同，这里 IN 后面的子查询，是每一行mm_member都会去重新执行一遍，并且没有用到缓存。</p>
+<p>耗时：40.834s &gt; 0.120s*370=44.4</p>
+<p>其中子查询语句：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT SQL_NO_CACHE member_id FROM mm_log ml WHERE ml.access_time LIKE &apos;%2017-02-06%&apos; GROUP BY ml.member_id;</span><br></pre></td></tr></table></figure></p>
+<p>仅耗时 0.11s</p>
+<h4 id="子查询-exist"><a href="#子查询-exist" class="headerlink" title="子查询 exist"></a>子查询 exist</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">    SQL_NO_CACHE mm.*</span><br><span class="line">FROM</span><br><span class="line">    mm_member mm</span><br><span class="line">WHERE</span><br><span class="line">    EXISTS (SELECT * FROM mm_log ml WHERE mm.id = ml.member_id AND ml.access_time LIKE &apos;%2017-02-06%&apos;);</span><br></pre></td></tr></table></figure>
+<p>相比于IN，这里的优化在于子查询，多了<code>mm.id = ml.member_id</code>条件，在where处就把不符合条件的记录过滤掉。</p>
+<p>耗时：34s</p>
+<p>对于在子查询中使用IN的性能高还是是用EXITS的性能高，有一种普遍的说法是：</p>
+<p>1，在外表大，内表小，外表中有索引的情况下，使用IN。</p>
+<p>2，在外表小，内表大，内表中有索引的情况下，使用EXITS。</p>
+<p><strong>参考</strong></p>
+<p>感谢大神分享，本文更多是总结和自己的理解补充，内容和例子都来自于</p>
+<ul>
+<li>sql语句的执行流程 <a href="https://blog.csdn.net/csdn_hklm/article/details/78394412" target="_blank" rel="noopener">https://blog.csdn.net/csdn_hklm/article/details/78394412</a></li>
+<li>笛卡尔积表 <a href="http://www.cnblogs.com/cdf-opensource-007/p/6502556.html" target="_blank" rel="noopener">http://www.cnblogs.com/cdf-opensource-007/p/6502556.html</a></li>
+<li>慎用子查询 <a href="https://www.cnblogs.com/cdf-opensource-007/p/6540521.html" target="_blank" rel="noopener">https://www.cnblogs.com/cdf-opensource-007/p/6540521.html</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Do Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Do Lee 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/性能优化/" rel="tag"># 性能优化</a>
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/16/存儲引擎對比/" rel="next" title="存儲引擎對比">
+                <i class="fa fa-chevron-left"></i> 存儲引擎對比
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/26/中间件基础知识/" rel="prev" title="MySQL-分区及中间件简介">
+                MySQL-分区及中间件简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Do Lee</p>
+              <p class="site-description motion-element" itemprop="description">思考、总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/do3956" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:395614269@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#查询sql语句的执行流程"><span class="nav-number">1.</span> <span class="nav-text">查询sql语句的执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算SQL平均耗时"><span class="nav-number">2.</span> <span class="nav-text">计算SQL平均耗时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慎用子查询"><span class="nav-number">3.</span> <span class="nav-text">慎用子查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#join"><span class="nav-number">3.1.</span> <span class="nav-text">join</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子查询-in"><span class="nav-number">3.2.</span> <span class="nav-text">子查询 in</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#子查询-exist"><span class="nav-number">3.3.</span> <span class="nav-text">子查询 exist</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Do Lee</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

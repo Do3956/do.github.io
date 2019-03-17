@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
+<meta name="description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，可以参考服务发现那套逻辑。  目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路  方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置  本质上就">
 <meta name="keywords" content="服务发现,wsgi,flask">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于过进程的配置管理">
 <meta property="og:url" content="http://yoursite.com/2018/12/20/flask刷新内存配置/index.html">
 <meta property="og:site_name" content="李庭嘉的博客">
-<meta property="og:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
+<meta property="og:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，可以参考服务发现那套逻辑。  目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路  方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置  本质上就">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-20T05:39:33.373Z">
+<meta property="og:updated_time" content="2019-03-17T15:09:33.364Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于过进程的配置管理">
-<meta name="twitter:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，都可以参考服务发现那套逻辑。 方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置 稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。   定时加载配置到服务中  需">
+<meta name="twitter:description" content="需求：程序中的配置，怎么能够实时更新。其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，其本质也还都配置的管理，可以参考服务发现那套逻辑。  目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路  方案 对外暴露一个接口，用于刷新配置 定时加载配置到服务中 每次接口调用都实时去加载配置  各方案优缺点 对外暴露一个接口，用于刷新配置  本质上就">
 
 
 
@@ -305,7 +305,18 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/服务发现/" itemprop="url" rel="index">
+                  <a href="/categories/微服务/" itemprop="url" rel="index">
+                    <span itemprop="name">微服务</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/微服务/服务发现/" itemprop="url" rel="index">
                     <span itemprop="name">服务发现</span>
                   </a>
                 </span>
@@ -342,33 +353,57 @@
       
 
       
-        <h4 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h4><p>程序中的配置，怎么能够实时更新。<br>其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，<br>其本质也还都配置的管理，都可以参考服务发现那套逻辑。</p>
+        <h4 id="需求："><a href="#需求：" class="headerlink" title="需求："></a>需求：</h4><p>程序中的配置，怎么能够实时更新。<br>其实我想解决的是业务配置的管理，可是想一想，无论业务配置还是服务的配置，<br>其本质也还都配置的管理，可以参考服务发现那套逻辑。</p>
+<blockquote>
+<p>目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路</p>
+</blockquote>
 <h4 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h4><ol>
 <li>对外暴露一个接口，用于刷新配置</li>
 <li>定时加载配置到服务中</li>
 <li>每次接口调用都实时去加载配置</li>
 </ol>
 <h4 id="各方案优缺点"><a href="#各方案优缺点" class="headerlink" title="各方案优缺点"></a>各方案优缺点</h4><ol>
-<li>对外暴露一个接口，用于刷新配置<ol>
-<li>稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。</li>
-</ol>
-</li>
-<li>定时加载配置到服务中 <ol>
-<li>需要等待刷新的时间，配置人员要等待，不具备实时性</li>
-<li>无法很好的把控程序刷新时机，如果要同时改多个配置，可能会有配置改到一半就被刷新的风险</li>
-</ol>
-</li>
-<li>每次接口调用都实时去加载配置<ol>
-<li>简单，但是配置多或访问量大的情况不适合</li>
-<li>优化，将配置更新时间存在redis中，每次访问redis，和本地的更新时间做比较，不一致则更新。</li>
-</ol>
-</li>
-</ol>
+<li><p>对外暴露一个接口，用于刷新配置</p>
 <blockquote>
-<p>目前服务发现更多采用的是分布式k/v，直接用redis还是少数，这里只是简单列举思路</p>
+<p>本质上就是进程间通讯</p>
 </blockquote>
+<p> <br>缺点：</p>
+<ul>
+<li><p>稍微麻烦：要写接口，还要让对方调用，如果有多个进程，需要多次调用。</p>
+<p><br>优点：</p>
+</li>
+<li>实时性强</li>
+<li>对业务系统的消耗最低</li>
+</ul>
+</li>
+<li><p>定时加载配置到服务中<br> <br>缺点：</p>
+<ul>
+<li>需要等待刷新的时间，配置人员要等待，不具备实时性</li>
+<li><p>无法很好的把控程序刷新时机，如果要同时改多个配置，可能会有配置改到一半就被刷新的风险</p>
+<p><br>优点：</p>
+</li>
+<li>开发时省事</li>
+</ul>
+</li>
+<li><p>每次接口调用都实时去加载配置<br> <br>缺点：</p>
+<ul>
+<li><p>对业务系统的消耗较高</p>
+<p><br>优点：</p>
+</li>
+<li><p>简单，但是配置多或访问量大的情况不适合<br><br>优化：</p>
+</li>
+<li>数据量大的情况：将配置更新时间存在redis中，每次访问redis，和本地的更新时间做比较，不一致则更新。</li>
+<li>数据量小的情况：将配置存在redis中，做比较，不一致则更新。</li>
+<li>并发量较大：加上内存过期机制，若实时性较高，可以只保存2-3秒；还是采用多级缓存的思路。</li>
+</ul>
+</li>
+</ol>
 <h4 id="以往的方案"><a href="#以往的方案" class="headerlink" title="以往的方案"></a>以往的方案</h4><p>采用第一种。<br>用的twisted或tornado异步处理请求，每个进程分别对应两个端口，分别对内和对外提供服务。<br>对内服务主要用于刷新配置和设置临时变量。<br>如果要刷新配置，只要调用对应的内部端口即可。</p>
 <h4 id="新的问题"><a href="#新的问题" class="headerlink" title="新的问题"></a>新的问题</h4><p>目前团队用的flask，采用wsgi管理多个进程，而多个进程的端口都是同一个。<br>怎么样才能让所有的进程都同步到最新的配置呢？</p>
+<h4 id="目前的结论"><a href="#目前的结论" class="headerlink" title="目前的结论"></a>目前的结论</h4><ul>
+<li>方案2是个坑；flask 可以用方案3；并发量特别大的时候，采用方案1。</li>
+<li>方案1要实现同一端口的多进程调用，只能对wsgi再封装，如非必要，先放弃。</li>
+</ul>
 <h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><ul>
 <li><a href="https://www.jianshu.com/p/75e1107530b1" target="_blank" rel="noopener">https://www.jianshu.com/p/75e1107530b1</a></li>
 </ul>
@@ -524,7 +559,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -535,7 +570,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -546,7 +581,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -602,7 +637,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#需求："><span class="nav-number">1.</span> <span class="nav-text">需求：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案"><span class="nav-number">2.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#各方案优缺点"><span class="nav-number">3.</span> <span class="nav-text">各方案优缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以往的方案"><span class="nav-number">4.</span> <span class="nav-text">以往的方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的问题"><span class="nav-number">5.</span> <span class="nav-text">新的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#需求："><span class="nav-number">1.</span> <span class="nav-text">需求：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方案"><span class="nav-number">2.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#各方案优缺点"><span class="nav-number">3.</span> <span class="nav-text">各方案优缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#以往的方案"><span class="nav-number">4.</span> <span class="nav-text">以往的方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的问题"><span class="nav-number">5.</span> <span class="nav-text">新的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目前的结论"><span class="nav-number">6.</span> <span class="nav-text">目前的结论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
             
 
           </div>

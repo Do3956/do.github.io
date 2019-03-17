@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="MySQL,大数据,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="李庭嘉的博客" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="中间件分类  lib库  业务直接到数据库，少一层proxy效率更高 没有proxy的lvs的单点问题   proxy  统一管理所有到数据库的连接，连接复用 基础查询功能抽象，减少代码耦合 易于实现监控、数据迁移、连接管理等功能    sharding-jdbc（开源，lib） 当当应用框架ddframe中，从关系型数据库模块dd-rdb中分离出来的数据库水平分片框架可惜是Java写的 功能1）">
+<meta name="keywords" content="MySQL,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL-分区及中间件简介">
+<meta property="og:url" content="http://yoursite.com/2019/02/06/mysql中间件对比/index.html">
+<meta property="og:site_name" content="李庭嘉的博客">
+<meta property="og:description" content="中间件分类  lib库  业务直接到数据库，少一层proxy效率更高 没有proxy的lvs的单点问题   proxy  统一管理所有到数据库的连接，连接复用 基础查询功能抽象，减少代码耦合 易于实现监控、数据迁移、连接管理等功能    sharding-jdbc（开源，lib） 当当应用框架ddframe中，从关系型数据库模块dd-rdb中分离出来的数据库水平分片框架可惜是Java写的 功能1）">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-17T15:09:33.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL-分区及中间件简介">
+<meta name="twitter:description" content="中间件分类  lib库  业务直接到数据库，少一层proxy效率更高 没有proxy的lvs的单点问题   proxy  统一管理所有到数据库的连接，连接复用 基础查询功能抽象，减少代码耦合 易于实现监控、数据迁移、连接管理等功能    sharding-jdbc（开源，lib） 当当应用框架ddframe中，从关系型数据库模块dd-rdb中分离出来的数据库水平分片框架可惜是Java写的 功能1）">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/06/mysql中间件对比/">
+
+
+
+
+
+  <title>MySQL-分区及中间件简介 | 李庭嘉的博客</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李庭嘉的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">工具谁都能用，掌握原理才是核心</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/06/mysql中间件对比/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Do Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李庭嘉的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MySQL-分区及中间件简介</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-06T17:42:41+08:00">
+                2019-02-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据存储/" itemprop="url" rel="index">
+                    <span itemprop="name">数据存储</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据存储/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>分类</p>
+<ul>
+<li><p>lib库</p>
+<ul>
+<li>业务直接到数据库，少一层proxy效率更高</li>
+<li>没有proxy的lvs的单点问题</li>
+</ul>
+</li>
+<li><p>proxy</p>
+<ul>
+<li>统一管理所有到数据库的连接，连接复用</li>
+<li>基础查询功能抽象，减少代码耦合</li>
+<li>易于实现监控、数据迁移、连接管理等功能</li>
+</ul>
+</li>
+</ul>
+<h3 id="sharding-jdbc（开源，lib）"><a href="#sharding-jdbc（开源，lib）" class="headerlink" title="sharding-jdbc（开源，lib）"></a>sharding-jdbc（开源，lib）</h3><blockquote>
+<p>当当应用框架ddframe中，从关系型数据库模块dd-rdb中分离出来的数据库水平分片框架<br>可惜是Java写的</p>
+<h4 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h4><p>1）以jar包形式提供服务</p>
+</blockquote>
+<p>2）分片灵活，支持等号、between、in等多维度分片</p>
+<p>3）sql解析，支持聚合、分组、排序、limit、or等</p>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><p>1）分片规则：策略自定义、复数分片数</p>
+<p>2）JDBC规范重写：针对DataSource、Connection、Statement、PreparedStatement和ResultSet接口封装</p>
+<p>3）sql解析：druid</p>
+<p>4）sql改写：修改逻辑表名-&gt;真实表名；替换不支持的功能，如：avg-&gt;sum和count</p>
+<p>5）sql路由：单表路由、binding表路由、笛卡尔积路由</p>
+<p>6）sql执行：多线程并发执行sql</p>
+<p>7）结果归并：遍历类、排序类（归并排序）、聚合类（比较型、累加型、平均型）、分组类</p>
+<h3 id="NewSQL"><a href="#NewSQL" class="headerlink" title="NewSQL"></a>NewSQL</h3><p><a href="https://baijiahao.baidu.com/s?id=1592030931074047993&amp;wfr=spider&amp;for=pc" target="_blank" rel="noopener">https://baijiahao.baidu.com/s?id=1592030931074047993&amp;wfr=spider&amp;for=pc</a></p>
+<h3 id="mycat（开源，proxy）"><a href="#mycat（开源，proxy）" class="headerlink" title="mycat（开源，proxy）"></a>mycat（开源，proxy）</h3><blockquote>
+<p>社区爱好者在阿里cobar基础上进行二次开发，解决了cobar的一些问题，且加入了新的功能。<br>不适用场景<br><a href="https://www.sohu.com/a/211953442_470018" target="_blank" rel="noopener">https://www.sohu.com/a/211953442_470018</a></p>
+</blockquote>
+<h3 id="MaxScale"><a href="#MaxScale" class="headerlink" title="MaxScale"></a>MaxScale</h3><blockquote>
+<p>mariadb (MySQL原作者维护的一个版本)研发，目前版本不支持分库分表。</p>
+</blockquote>
+<h3 id="MySQL-Route"><a href="#MySQL-Route" class="headerlink" title="MySQL Route"></a>MySQL Route</h3><blockquote>
+<p>MySQL 官方Oracle公司发布出来的一个中间件</p>
+</blockquote>
+<h3 id="Atlas"><a href="#Atlas" class="headerlink" title="Atlas"></a>Atlas</h3><blockquote>
+<p>360团队基于 mysql proxy 把lua用c改写，在高并发下经常会挂掉。</p>
+</blockquote>
+<h3 id="DBproxy（开源，proxy）"><a href="#DBproxy（开源，proxy）" class="headerlink" title="DBproxy（开源，proxy）"></a>DBproxy（开源，proxy）</h3><blockquote>
+<p>针对atlas进行改进，形成了新的高可靠、高可用企业级数据库中间件DBProxy</p>
+</blockquote>
+<h3 id="oneproxy（不开源，proxy）"><a href="#oneproxy（不开源，proxy）" class="headerlink" title="oneproxy（不开源，proxy）"></a>oneproxy（不开源，proxy）</h3><blockquote>
+<p>基于mysql协议的数据库中间件。利用c进行开发的，专注于性能和稳定性。</p>
+</blockquote>
+<h3 id="vitess"><a href="#vitess" class="headerlink" title="vitess"></a>vitess</h3><blockquote>
+<p>Youtube上产使用的，架构复杂，不支持MySQL原生协议</p>
+</blockquote>
+<h3 id="TDDL"><a href="#TDDL" class="headerlink" title="TDDL"></a>TDDL</h3><blockquote>
+<p>Tabao开发，主要解决了分库分表对应用的透明化以及异构数据库之间的数据复制。<br>复杂度相对较高。当前公布的文档较少，只开源动态数据源，分表分库部分还未开源，还需要依赖diamond，不推荐使用。</p>
+</blockquote>
+<h3 id="DBProxy"><a href="#DBProxy" class="headerlink" title="DBProxy"></a>DBProxy</h3><blockquote>
+<p>美团点评基于 Atlas 的改进。<br>其特性主要有：读写分离、负载均衡、支持分表、IP过滤、sql语句黑名单、DBA平滑下线DB、从库流量配置、动态加载配置项</p>
+</blockquote>
+<p><strong>参考</strong></p>
+<ul>
+<li><a href="https://www.cnblogs.com/mliudong/p/3625522.html" target="_blank" rel="noopener">https://www.cnblogs.com/mliudong/p/3625522.html</a></li>
+<li><a href="https://www.cnblogs.com/taoxinrui/p/6782791.html" target="_blank" rel="noopener">https://www.cnblogs.com/taoxinrui/p/6782791.html</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Do Lee 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Do Lee 支付宝">
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          
+            <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/04/关于拖拽排序的后端存储设计/" rel="next" title="关于拖拽排序的后端存储设计">
+                <i class="fa fa-chevron-left"></i> 关于拖拽排序的后端存储设计
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/16/存儲引擎對比/" rel="prev" title="存儲引擎對比">
+                存儲引擎對比 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Do Lee</p>
+              <p class="site-description motion-element" itemprop="description">思考、总结</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/do3956" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:395614269@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#中间件"><span class="nav-number">1.</span> <span class="nav-text">中间件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sharding-jdbc（开源，lib）"><span class="nav-number">1.1.</span> <span class="nav-text">sharding-jdbc（开源，lib）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#功能"><span class="nav-number">1.1.1.</span> <span class="nav-text">功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特点"><span class="nav-number">1.1.2.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NewSQL"><span class="nav-number">1.2.</span> <span class="nav-text">NewSQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mycat（开源，proxy）"><span class="nav-number">1.3.</span> <span class="nav-text">mycat（开源，proxy）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MaxScale"><span class="nav-number">1.4.</span> <span class="nav-text">MaxScale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-Route"><span class="nav-number">1.5.</span> <span class="nav-text">MySQL Route</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Atlas"><span class="nav-number">1.6.</span> <span class="nav-text">Atlas</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DBproxy（开源，proxy）"><span class="nav-number">1.7.</span> <span class="nav-text">DBproxy（开源，proxy）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#oneproxy（不开源，proxy）"><span class="nav-number">1.8.</span> <span class="nav-text">oneproxy（不开源，proxy）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vitess"><span class="nav-number">1.9.</span> <span class="nav-text">vitess</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TDDL"><span class="nav-number">1.10.</span> <span class="nav-text">TDDL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DBProxy"><span class="nav-number">1.11.</span> <span class="nav-text">DBProxy</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Do Lee</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
